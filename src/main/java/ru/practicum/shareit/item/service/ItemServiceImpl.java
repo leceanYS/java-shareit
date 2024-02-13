@@ -16,9 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-    @Qualifier("inMemoryItemDao")
     private final ItemDao itemDao;
-    @Qualifier("inMemoryUserDao")
     private final UserDao userDao;
 
     @Override
@@ -32,16 +30,14 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto update(ItemDto item, long userId, long itemId) {
         Item oldItem = itemDao.get(itemId);
         if (oldItem.getOwner().getId() == userId) {
-            oldItem.setName(item.getName() != null ? item.getName() : oldItem.getName());
-            oldItem.setDescription(item.getDescription() != null ? item.getDescription() : oldItem.getDescription());
-            oldItem.setAvailable(item.getAvailable() != null ? item.getAvailable() : oldItem.getAvailable());
-            return ItemMapper.ITEM_MAPPER.toDto(itemDao.update(oldItem));
+            oldItem.setName(item.getName() != null && !item.getName().isBlank() ? item.getName() : oldItem.getName());
+            oldItem.setDescription(item.getDescription() !=null && !item.getDescription().isBlank() ? item.getDescription() : oldItem.getDescription());
+            oldItem.setAvailable(item.getAvailable() !=null ? item.getAvailable() : oldItem.getAvailable());
+            return ItemMapper.ITEM_MAPPER.toDto(oldItem);
         } else {
-            throw new IncorrectUserException(
-                    String.format("Пользователь %s не не имеет прав для редактирования вещи %s", userId, itemId));
+            throw new IncorrectUserException( String.format("Пользователь %s не не имеет прав для редактирования вещи %s", userId, itemId));
         }
     }
-
     @Override
     public ItemDto get(Long itemId) {
         return ItemMapper.ITEM_MAPPER.toDto(itemDao.get(itemId));

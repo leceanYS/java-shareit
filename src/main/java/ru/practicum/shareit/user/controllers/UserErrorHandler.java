@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -15,11 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @ControllerAdvice
 public class UserErrorHandler {
-
     @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class})
     public ResponseEntity<Map<String, String>> handle(final Exception ex) {
+        log.error("Error occurred: {}", ex.getMessage(), ex);
         Map<String, String> error = new HashMap<>();
         if (ex instanceof MethodArgumentNotValidException) {
             BindingResult bindingResult = ((MethodArgumentNotValidException) ex).getBindingResult();

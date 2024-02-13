@@ -1,8 +1,6 @@
 package ru.practicum.shareit.user.service;
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.user.dao.UserDao;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -16,8 +14,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    @Qualifier("inMemoryUserDao")
-    @NonNull
+
     private final UserDao userDao;
 
     @Override

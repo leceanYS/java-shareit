@@ -27,10 +27,10 @@ public class InMemoryItemDao implements ItemDao {
 
     @Override
     public Item get(long itemId) {
-        Optional<Item> item = Optional.ofNullable(itemMap.get(itemId));
-        if (item.isPresent()) {
+        Item item=itemMap.get(itemId);
+        if (item != null) {
             log.info("Вещь с id {}", itemId);
-            return item.get();
+            return item;
         } else {
             log.info("Вещь с id {} не найдена", itemId);
             throw new ItemNotFoundException(String.format("Вещь с id %s не найдена", itemId));
