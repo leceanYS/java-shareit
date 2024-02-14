@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
@@ -27,7 +26,7 @@ public class InMemoryItemDao implements ItemDao {
 
     @Override
     public Item get(long itemId) {
-        Item item=itemMap.get(itemId);
+        Item item = itemMap.get(itemId);
         if (item != null) {
             log.info("Вещь с id {}", itemId);
             return item;

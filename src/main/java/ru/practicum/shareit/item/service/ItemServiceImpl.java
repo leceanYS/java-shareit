@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dao.ItemDao;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -31,11 +30,11 @@ public class ItemServiceImpl implements ItemService {
         Item oldItem = itemDao.get(itemId);
         if (oldItem.getOwner().getId() == userId) {
             oldItem.setName(item.getName() != null && !item.getName().isBlank() ? item.getName() : oldItem.getName());
-            oldItem.setDescription(item.getDescription() !=null && !item.getDescription().isBlank() ? item.getDescription() : oldItem.getDescription());
-            oldItem.setAvailable(item.getAvailable() !=null ? item.getAvailable() : oldItem.getAvailable());
+            oldItem.setDescription(item.getDescription() != null && !item.getDescription().isBlank() ? item.getDescription() : oldItem.getDescription());
+            oldItem.setAvailable(item.getAvailable() != null ? item.getAvailable() : oldItem.getAvailable());
             return ItemMapper.ITEM_MAPPER.toDto(oldItem);
         } else {
-            throw new IncorrectUserException( String.format("Пользователь %s не не имеет прав для редактирования вещи %s", userId, itemId));
+            throw new IncorrectUserException(String.format("Пользователь %s не не имеет прав для редактирования вещи %s", userId, itemId));
         }
     }
     @Override
