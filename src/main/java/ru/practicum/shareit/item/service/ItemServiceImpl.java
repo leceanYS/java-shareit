@@ -37,6 +37,7 @@ public class ItemServiceImpl implements ItemService {
             throw new IncorrectUserException(String.format("Пользователь %s не не имеет прав для редактирования вещи %s", userId, itemId));
         }
     }
+
     @Override
     public ItemDto get(Long itemId) {
         return ItemMapper.ITEM_MAPPER.toDto(itemDao.get(itemId));
