@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item.controllers;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -17,13 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 @ControllerAdvice
-@Slf4j
 public class ItemErrorHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class})
-    public ResponseEntity handle(final Exception ex) {
-        log.error("Error occurred: {}", ex.getMessage(), ex);
-
+    public ResponseEntity<Map<String, String>> handle(final Exception ex) {
         Map<String, String> error = new HashMap<>();
         if (ex instanceof MethodArgumentNotValidException) {
             BindingResult bindingResult = ((MethodArgumentNotValidException) ex).getBindingResult();
@@ -34,15 +30,6 @@ public class ItemErrorHandler {
         }
         return ResponseEntity.badRequest().body(error);
     }
-
-    @ExceptionHandler(Throwable.class)
-    public ResponseEntity handle(final Throwable ex) {
-        log.error("Internal Server Error: {}", ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
-
-
-
 
     @ExceptionHandler(IncorrectUserException.class)
     public ResponseEntity<Map<String, String>> handle(final IncorrectUserException exception) {
