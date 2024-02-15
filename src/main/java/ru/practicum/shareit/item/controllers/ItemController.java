@@ -13,7 +13,7 @@ import ru.practicum.shareit.item.model.validationGroups.ItemOnUpdate;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.constraints.NotNull;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -66,7 +66,7 @@ public class ItemController {
             @ApiResponse(responseCode = "200", description = "Items get"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public List<ItemDto> getAll(@RequestHeader("X_Sharer_User_Id") Long userId) {
+    public List<ItemDto> getAll(@NotNull @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Получен запрос на получение всех вещей пользователя {}", userId);
         return itemService.getAllByOwner(userId);
     }
@@ -79,7 +79,7 @@ public class ItemController {
     public List<ItemDto> search(@RequestParam String text) {
         if (text.isBlank()) {
             log.info("Получен запрос на поиск с пустым значением в запросе");
-            return Collections.emptyList();
+            return new ArrayList<>();
         } else {
             log.info("Получен запрос на поиск с текстом {}", text);
             return itemService.search(text);
