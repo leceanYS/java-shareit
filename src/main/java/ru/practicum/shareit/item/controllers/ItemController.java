@@ -29,7 +29,7 @@ public class ItemController {
             @ApiResponse(responseCode = "200", description = "Item create"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public ItemDto create(@RequestHeader("X_Sharer_User_Id") long userId,
+    public ItemDto create(@NotNull @RequestHeader("X-Sharer-User-Id") long userId,
                           @Validated(ItemOnCreate.class) @RequestBody ItemDto item) {
         log.info("Получен запрос на создание вещи");
         return itemService.create(item, userId);
