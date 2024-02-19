@@ -11,6 +11,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.validationGroups.ItemOnCreate;
 import ru.practicum.shareit.item.model.validationGroups.ItemOnUpdate;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.user.errors.UserNotFoundException;
+import ru.practicum.shareit.user.controllers.UserController;
 
 import java.util.List;
 
@@ -21,27 +23,26 @@ import java.util.List;
 
 
     public class ItemController {
-        private final ItemService itemService;
-        private static final String HEADER_USER_ID = "X-Sharer-User-Id";
+    private final ItemService itemService;
+    private static final String HEADER_USER_ID = "X-Sharer-User-Id";
 
-        @PostMapping
-        @Operation(summary = "Создание вещи")
-        @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Item create"),
-                @ApiResponse(responseCode = "404", description = "User not found")
-        })
-        public ItemDto create(@RequestHeader(HEADER_USER_ID) long userId,
-                              @Validated(ItemOnCreate.class) @RequestBody ItemDto item) {
-            log.info("Получен запрос на создание вещи");
-            return itemService.create(item, userId);
-        }
+
+    @PostMapping
+    @Operation(summary = "Создание вещи")
+    public ItemDto create(@RequestHeader(HEADER_USER_ID) long userId,
+                          @Validated(ItemOnCreate.class) @RequestBody ItemDto item) {
+        log.info("Получен запрос на создание вещи");
+        return itemService.create(item, userId);
+    }
+
+
 
     @PatchMapping("/{itemId}")
     @Operation(summary = "Обновление вещи")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Item update"),
             @ApiResponse(responseCode = "403", description = "Insufficient rights"),
-            @ApiResponse(responseCode = "500", description = "Item not found")
+            @ApiResponse(responseCode = "404", description = "Item not found")
     })
     public ItemDto update(@RequestHeader(HEADER_USER_ID) long userId,
                           @Validated(ItemOnUpdate.class) @RequestBody ItemDto item,
