@@ -32,10 +32,11 @@ import java.util.List;
                 @ApiResponse(responseCode = "404", description = "User not found")
         })
         public ItemDto create(@RequestHeader(HEADER_USER_ID) long userId,
-                                 @Validated(ItemOnCreate.class) @RequestBody ItemDto item){
+                              @Validated(ItemOnCreate.class) @RequestBody ItemDto item){
             log.info("Получен запрос на создание вещи");
             return itemService.create(item, userId);
         }
+
     @PatchMapping("/{itemId}")
     @Operation(summary = "Обновление вещи")
     @ApiResponses(value = {
