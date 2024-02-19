@@ -28,7 +28,7 @@ import java.util.List;
         @Operation(summary = "Создание вещи")
         @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Item create"),
-                @ApiResponse(responseCode = "500", description = "User not found")
+                @ApiResponse(responseCode = "404", description = "User not found")
         })
         public ItemDto create(@RequestHeader(HEADER_USER_ID) long userId,
                               @Validated(ItemOnCreate.class) @RequestBody ItemDto item) {
@@ -41,7 +41,7 @@ import java.util.List;
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Item update"),
             @ApiResponse(responseCode = "403", description = "Insufficient rights"),
-            @ApiResponse(responseCode = "404", description = "Item not found")
+            @ApiResponse(responseCode = "500", description = "Item not found")
     })
     public ItemDto update(@RequestHeader(HEADER_USER_ID) long userId,
                           @Validated(ItemOnUpdate.class) @RequestBody ItemDto item,
