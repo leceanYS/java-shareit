@@ -20,21 +20,22 @@ import java.util.List;
 @RequestMapping("/items")
 @RequiredArgsConstructor
 @Slf4j
-public class ItemController {
-    private final ItemService itemService;
 
-    @PostMapping
-    @Operation(summary = "Создание вещи")
-    @ApiResponses(value = {
+    public class ItemController {
+        private final ItemService itemService;
+        private static final String HEADER_USER_ID = "X_Sharer_User_Id";
+
+
+        @PostMapping
+        @Operation(summary = "Создание вещи")
+        @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Item create"),
-            @ApiResponse(responseCode = "404", description = "User not found")
-    })
-    public ItemDto create(@NotNull @RequestHeader("X-Sharer-User-Id") long userId,
-                          @Validated(ItemOnCreate.class) @RequestBody ItemDto item) {
-        log.info("Получен запрос на создание вещи");
-        return itemService.create(item, userId);
-    }
-
+                @ApiResponse(responseCode = "404", description = "User not found")
+        })
+        public ItemDto create(@RequestHeader(HEADER_USER_ID) long userId,
+                                 @Validated(ItemOnCreate.class) @RequestBody ItemDto item)
+        { log.info("Получен запрос на создание вещи");
+            return itemService.create(item, userId); }
     @PatchMapping("/{itemId}")
     @Operation(summary = "Обновление вещи")
     @ApiResponses(value = {
@@ -42,7 +43,7 @@ public class ItemController {
             @ApiResponse(responseCode = "403", description = "Insufficient rights"),
             @ApiResponse(responseCode = "404", description = "Item not found")
     })
-    public ItemDto update(@NotNull @RequestHeader("X-Sharer-User-Id") long userId,
+    public ItemDto update(@RequestHeader(HEADER_USER_ID) long userId,
                           @Validated(ItemOnUpdate.class) @RequestBody ItemDto item,
                           @PathVariable long itemId) {
         log.info("Получен запрос на обновление вещи с id {} от пользователя {}", itemId, userId);
@@ -66,7 +67,7 @@ public class ItemController {
             @ApiResponse(responseCode = "200", description = "Items get"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public List<ItemDto> getAll(@NotNull @RequestHeader("X-Sharer-User-Id") Long userId) {
+    public List<ItemDto> getAll(@RequestHeader(HEADER_USER_ID) Long userId) {
         log.info("Получен запрос на получение всех вещей пользователя {}", userId);
         return itemService.getAllByOwner(userId);
     }
