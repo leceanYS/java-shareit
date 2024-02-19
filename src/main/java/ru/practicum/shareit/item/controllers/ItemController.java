@@ -12,7 +12,6 @@ import ru.practicum.shareit.item.model.validationGroups.ItemOnCreate;
 import ru.practicum.shareit.item.model.validationGroups.ItemOnUpdate;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,9 +32,10 @@ import java.util.List;
                 @ApiResponse(responseCode = "404", description = "User not found")
         })
         public ItemDto create(@RequestHeader(HEADER_USER_ID) long userId,
-                                 @Validated(ItemOnCreate.class) @RequestBody ItemDto item)
-        { log.info("Получен запрос на создание вещи");
-            return itemService.create(item, userId); }
+                                 @Validated(ItemOnCreate.class) @RequestBody ItemDto item){
+            log.info("Получен запрос на создание вещи");
+            return itemService.create(item, userId);
+        }
     @PatchMapping("/{itemId}")
     @Operation(summary = "Обновление вещи")
     @ApiResponses(value = {
