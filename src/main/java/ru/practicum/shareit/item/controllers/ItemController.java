@@ -80,7 +80,7 @@ import java.util.List;
     public List<ItemDto> search(@RequestParam String text) {
         if (text.isBlank()) {
             log.info("Получен запрос на поиск с пустым значением в запросе");
-            return new ArrayList<>();
+            return List.of();
         } else {
             log.info("Получен запрос на поиск с текстом {}", text);
             return itemService.search(text);
