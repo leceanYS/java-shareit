@@ -11,6 +11,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.validationGroups.ItemOnCreate;
 import ru.practicum.shareit.item.model.validationGroups.ItemOnUpdate;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.user.errors.UserNotFoundException;
 
 import java.util.List;
 
@@ -27,9 +28,15 @@ import java.util.List;
 
     @PostMapping
     @Operation(summary = "Создание вещи")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Item create"),
+            @ApiResponse(responseCode = "404", description = "User not found")})
     public ItemDto create(@RequestHeader(HEADER_USER_ID) long userId,
                           @Validated(ItemOnCreate.class) @RequestBody ItemDto item) {
         log.info("Получен запрос на создание вещи");
+        if (!userService.exists(userId)) {
+            throw new UserNotFoundException("User not found");
+        }
         return itemService.create(item, userId);
     }
 
