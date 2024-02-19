@@ -12,24 +12,18 @@ import ru.practicum.shareit.item.model.validationGroups.ItemOnCreate;
 import ru.practicum.shareit.item.model.validationGroups.ItemOnUpdate;
 import ru.practicum.shareit.item.service.ItemService;
 
-
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
-@Slf4j
+
 
     public class ItemController {
         private final ItemService itemService;
         private static final String HEADER_USER_ID = "X_Sharer_User_Id";
 
-        @PostMapping
-        @Operation(summary = "Создание вещи")
-        @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Item create"),
-                @ApiResponse(responseCode = "404", description = "User not found")
-        })
         public ItemDto create(@RequestHeader(HEADER_USER_ID) long userId,
                               @Validated(ItemOnCreate.class) @RequestBody ItemDto item) {
             log.info("Получен запрос на создание вещи");
