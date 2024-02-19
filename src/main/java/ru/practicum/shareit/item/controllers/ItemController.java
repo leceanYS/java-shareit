@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -24,14 +25,13 @@ import java.util.List;
         private final ItemService itemService;
         private static final String HEADER_USER_ID = "X_Sharer_User_Id";
 
-
         @PostMapping
         @Operation(summary = "Создание вещи")
         @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Item create"),
                 @ApiResponse(responseCode = "404", description = "User not found")
         })
-        public ItemDto create(@RequestHeader(HEADER_USER_ID) long userId,
+        public ItemDto create(@NonNull @RequestHeader(HEADER_USER_ID) long userId,
                               @Validated(ItemOnCreate.class) @RequestBody ItemDto item) {
             log.info("Получен запрос на создание вещи");
             return itemService.create(item, userId);
@@ -44,7 +44,7 @@ import java.util.List;
             @ApiResponse(responseCode = "403", description = "Insufficient rights"),
             @ApiResponse(responseCode = "404", description = "Item not found")
     })
-    public ItemDto update(@RequestHeader(HEADER_USER_ID) long userId,
+    public ItemDto update(@NonNull @RequestHeader(HEADER_USER_ID) long userId,
                           @Validated(ItemOnUpdate.class) @RequestBody ItemDto item,
                           @PathVariable long itemId) {
         log.info("Получен запрос на обновление вещи с id {} от пользователя {}", itemId, userId);
@@ -68,7 +68,7 @@ import java.util.List;
             @ApiResponse(responseCode = "200", description = "Items get"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public List<ItemDto> getAll(@RequestHeader(HEADER_USER_ID) Long userId) {
+    public List<ItemDto> getAll(@NonNull @RequestHeader(HEADER_USER_ID) Long userId) {
         log.info("Получен запрос на получение всех вещей пользователя {}", userId);
         return itemService.getAllByOwner(userId);
     }
