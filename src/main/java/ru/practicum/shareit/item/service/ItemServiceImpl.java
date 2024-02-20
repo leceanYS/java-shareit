@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.item.dao.ItemDao;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -8,6 +9,7 @@ import ru.practicum.shareit.item.errors.IncorrectUserException;
 import ru.practicum.shareit.item.mappers.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dao.UserDao;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,7 +19,13 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService {
     private final ItemDao itemDao;
     private final UserDao userDao;
+    @Autowired
+    private UserService userService;
 
+    @Override
+    public boolean userExists(Long userId) {
+        return userService.exists(userId);
+    }
     @Override
     public ItemDto create(ItemDto item, long userId) {
         Item newItem = ItemMapper.ITEM_MAPPER.fromDto(item);
