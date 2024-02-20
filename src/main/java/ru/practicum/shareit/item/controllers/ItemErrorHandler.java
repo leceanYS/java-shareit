@@ -40,7 +40,7 @@ public class ItemErrorHandler {
     }
 
     @ExceptionHandler(Throwable.class)
-    public ResponseEntity<Map<String, String>> handleThrowable(final Throwable ex) {
+    public ResponseEntity<Map<String, String>> handleGeneralException(final Throwable ex) {
         log.error("Internal Server Error: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(Map.of("error", "Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
