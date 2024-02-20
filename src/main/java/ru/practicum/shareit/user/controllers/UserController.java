@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.errors.UserNotFoundException;
 import ru.practicum.shareit.user.model.validationGroups.UserOnCreate;
 import ru.practicum.shareit.user.model.validationGroups.UserOnUpdate;
 import ru.practicum.shareit.user.service.UserService;
@@ -29,7 +30,12 @@ public class UserController {
     })
     public UserDto create(@Validated(UserOnCreate.class) @RequestBody UserDto user) {
         log.info("Получен запрос на добавление юзера");
-        return userService.create(user);
+        try {
+            return userService.create(user);
+        } catch (UserNotFoundException e) {
+            log.error("Пользователь не найден: " + e.getMessage());
+            throw e;
+        }
     }
 
     @PatchMapping("/{id}")
