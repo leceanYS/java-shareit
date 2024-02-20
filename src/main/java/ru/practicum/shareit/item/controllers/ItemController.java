@@ -34,9 +34,6 @@ import java.util.List;
     public ItemDto create(@RequestHeader(HEADER_USER_ID) long userId,
                           @Validated(ItemOnCreate.class) @RequestBody ItemDto item) {
         log.info("Получен запрос на создание вещи");
-        if (!userService.exists(userId)) {
-            throw new UserNotFoundException("User not found");
-        }
         return itemService.create(item, userId);
     }
 
