@@ -21,7 +21,7 @@ import java.util.Map;
 public class ItemErrorHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class})
-    public ResponseEntity handle(final Exception ex) {
+    public ResponseEntity<Map<String, String>> handleValidationException(final Exception ex) {
         log.error("Error occurred: {}", ex.getMessage(), ex);
 
         Map<String, String> error = new HashMap<>();
@@ -46,8 +46,8 @@ public class ItemErrorHandler {
         return new ResponseEntity<>(Map.of("Item", exception.getMessage()), HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(ItemNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handle(final ItemNotFoundException exception) {
-        return new ResponseEntity<>(Map.of("Item", exception.getMessage()), HttpStatus.NOT_FOUND);
+    @ExceptionHandler(IncorrectUserException.class)
+    public ResponseEntity<Map<String, String>> handleIncorrectUserException(final IncorrectUserException exception) {
+        return new ResponseEntity<>(Map.of("error", exception.getMessage()), HttpStatus.NOT_FOUND);
     }
 }
