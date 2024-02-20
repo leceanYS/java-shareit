@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.practicum.shareit.item.errors.IncorrectUserException;
+import ru.practicum.shareit.item.errors.ItemNotFoundException;
 
 import javax.validation.ValidationException;
 import java.util.HashMap;
@@ -35,13 +36,12 @@ public class ItemErrorHandler {
     }
 
     @ExceptionHandler(IncorrectUserException.class)
-    public ResponseEntity<Map<String, String>> handleIncorrectUserException(final IncorrectUserException exception) {
-        return new ResponseEntity<>(Map.of("Item", exception.getMessage()), HttpStatus.NOT_FOUND);
+    public ResponseEntity<Map<String, String>> handle(final IncorrectUserException exception) {
+        return new ResponseEntity<>(Map.of("Item", exception.getMessage()), HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(Throwable.class)
-    public ResponseEntity<Map<String, String>> handleGeneralException(final Throwable ex) {
-        log.error("Internal Server Error: {}", ex.getMessage(), ex);
-        return new ResponseEntity<>(Map.of("error", "Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
+    @ExceptionHandler(ItemNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handle(final ItemNotFoundException exception) {
+        return new ResponseEntity<>(Map.of("Item", exception.getMessage()), HttpStatus.NOT_FOUND);
     }
 }
