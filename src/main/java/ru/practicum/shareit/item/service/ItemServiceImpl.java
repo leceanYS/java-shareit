@@ -26,6 +26,7 @@ public class ItemServiceImpl implements ItemService {
     public boolean userExists(Long userId) {
         return userService.exists(userId);
     }
+
     @Override
     public ItemDto create(ItemDto item, long userId) {
         Item newItem = ItemMapper.ITEM_MAPPER.fromDto(item);
