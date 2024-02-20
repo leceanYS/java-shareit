@@ -20,7 +20,7 @@ import java.util.Map;
 public class ItemErrorHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class, ValidationException.class})
-    public ResponseEntity handleIncorrectUserException(final Exception ex) {
+    public ResponseEntity handle(final Exception ex) {
         log.error("Error occurred: {}", ex.getMessage(), ex);
 
         Map<String, String> error = new HashMap<>();
