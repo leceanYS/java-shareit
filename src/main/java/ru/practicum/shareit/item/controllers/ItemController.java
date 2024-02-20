@@ -21,11 +21,9 @@ import java.util.List;
 
 
     public class ItemController {
-
     private final ItemService itemService;
     private static final String HEADER_USER_ID = "X-Sharer-User-Id";
-
-    @PostMapping("/items")
+    @PostMapping
     @Operation(summary = "Создание вещи")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Item create"),
