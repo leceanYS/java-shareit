@@ -42,6 +42,6 @@ public class ItemErrorHandler {
 
     @ExceptionHandler(IncorrectUserException.class)
     public ResponseEntity<Map<String, String>> handleIncorrectUserException(final IncorrectUserException exception) {
-        return new ResponseEntity<>(Map.of("Item", exception.getMessage()), HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(Map.of("Item", exception.getMessage()), HttpStatus.NOT_FOUND);
     }
 }
