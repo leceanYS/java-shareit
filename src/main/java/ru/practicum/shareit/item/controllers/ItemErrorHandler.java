@@ -9,7 +9,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import ru.practicum.shareit.item.errors.IncorrectUserException;
-import ru.practicum.shareit.item.errors.ItemNotFoundException;
 
 import javax.validation.ValidationException;
 import java.util.HashMap;
