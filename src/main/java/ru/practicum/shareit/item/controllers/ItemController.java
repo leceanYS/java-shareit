@@ -29,12 +29,10 @@ public class ItemController {
 
     @PostMapping("/items")
     public ResponseEntity<ItemDto> createItem(@RequestBody ItemDto itemDto, Long userId) {
-        // Проверяем существование пользователя перед созданием предмета
         if (!userService.userExists(userId)) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        // Создаем предмет
         ItemDto createdItem = itemService.create(itemDto, userId);
 
         return new ResponseEntity<>(createdItem, HttpStatus.CREATED);
