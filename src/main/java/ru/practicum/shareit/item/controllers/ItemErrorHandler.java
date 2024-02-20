@@ -40,6 +40,7 @@ public class ItemErrorHandler {
         log.error("Internal Server Error: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(Map.of("error", "Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
     @ExceptionHandler(IncorrectUserException.class)
     public ResponseEntity<Map<String, String>> handle(final IncorrectUserException exception) {
         return new ResponseEntity<>(Map.of("Item", exception.getMessage()), HttpStatus.FORBIDDEN);
