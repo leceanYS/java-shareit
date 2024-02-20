@@ -5,8 +5,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -15,7 +13,6 @@ import ru.practicum.shareit.item.model.validationGroups.ItemOnUpdate;
 import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
