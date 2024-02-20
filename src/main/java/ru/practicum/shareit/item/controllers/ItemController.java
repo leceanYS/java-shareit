@@ -39,12 +39,6 @@ import java.util.Map;
         return itemService.create(item, userId);
     }
 
-    @ExceptionHandler(Throwable.class)
-    public ResponseEntity<Map<String, String>> handleThrowable(final Throwable ex) {
-        log.error("Internal Server Error: {}", ex.getMessage(), ex);
-        return new ResponseEntity<>(Map.of("error", "Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
     @PatchMapping("/{itemId}")
     @Operation(summary = "Обновление вещи")
     @ApiResponses(value = {
