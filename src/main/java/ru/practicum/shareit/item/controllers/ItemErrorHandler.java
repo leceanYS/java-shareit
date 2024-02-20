@@ -34,14 +34,14 @@ public class ItemErrorHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
+    @ExceptionHandler(IncorrectUserException.class)
+    public ResponseEntity<Map<String, String>> handleIncorrectUserException(final IncorrectUserException exception) {
+        return new ResponseEntity<>(Map.of("Item", exception.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Map<String, String>> handleThrowable(final Throwable ex) {
         log.error("Internal Server Error: {}", ex.getMessage(), ex);
         return new ResponseEntity<>(Map.of("error", "Internal Server Error"), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    @ExceptionHandler(IncorrectUserException.class)
-    public ResponseEntity<Map<String, String>> handleIncorrectUserException(final IncorrectUserException exception) {
-        return new ResponseEntity<>(Map.of("Item", exception.getMessage()), HttpStatus.NOT_FOUND);
     }
 }
