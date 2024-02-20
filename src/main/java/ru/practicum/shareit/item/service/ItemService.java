@@ -13,6 +13,4 @@ public interface ItemService {
     List<ItemDto> getAllByOwner(Long userId);
 
     List<ItemDto> search(String text);
-
-    boolean userExists(Long userId);
 }

@@ -49,14 +49,4 @@ public class UserServiceImpl implements UserService {
         userDao.deleteById(id);
     }
 
-    @Override
-    public boolean exists(Long id) {
-        return false;
-    }
-
-    @Override
-    public boolean userExists(Long userId) {
-        return false;
-    }
-
 }

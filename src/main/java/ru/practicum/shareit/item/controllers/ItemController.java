@@ -5,14 +5,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.validationGroups.ItemOnCreate;
 import ru.practicum.shareit.item.model.validationGroups.ItemOnUpdate;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.errors.UserNotFoundException;
 
 import java.util.List;
 
@@ -22,22 +21,21 @@ import java.util.List;
 @RequiredArgsConstructor
 
 
-public class ItemController {
-    private static final String HEADER_USER_ID = "X-Sharer-User-Id";
+    public class ItemController {
     private final ItemService itemService;
-    private final UserService userService;
+    private static final String HEADER_USER_ID = "X-Sharer-User-Id";
 
-    @PostMapping("/items")
-    public ResponseEntity<ItemDto> createItem(@RequestBody ItemDto itemDto, Long userId) {
-        if (!userService.userExists(userId)) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
 
-        ItemDto createdItem = itemService.create(itemDto, userId);
-
-        return new ResponseEntity<>(createdItem, HttpStatus.CREATED);
+    @PostMapping
+    @Operation(summary = "Создание вещи")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Item create"),
+            @ApiResponse(responseCode = "404", description = "User not found")})
+    public ItemDto create(@RequestHeader(HEADER_USER_ID) long userId,
+                          @Validated(ItemOnCreate.class) @RequestBody ItemDto item) {
+        log.info("Получен запрос на создание вещи");
+        return itemService.create(item, userId);
     }
-
 
 
 
