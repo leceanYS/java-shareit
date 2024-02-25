@@ -24,6 +24,7 @@ import java.util.Set;
 public class ItemController {
     private final ItemService itemService;
     private static final String HEADER_USER_ID = "X-Sharer-User-Id";
+
     @PostMapping
     @Operation(summary = "Создание вещи")
     @ApiResponses(value = {
