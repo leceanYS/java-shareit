@@ -7,29 +7,29 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.validationGroups.ItemOnCreate;
 import ru.practicum.shareit.item.model.validationGroups.ItemOnUpdate;
 import ru.practicum.shareit.item.service.ItemService;
 
-import java.util.List;
+import javax.validation.Valid;
+import java.util.HashSet;
+import java.util.Set;
 
-@Slf4j
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
-
-
-    public class ItemController {
+@Slf4j
+public class ItemController {
     private final ItemService itemService;
     private static final String HEADER_USER_ID = "X-Sharer-User-Id";
-
-
     @PostMapping
     @Operation(summary = "Создание вещи")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Item create"),
-            @ApiResponse(responseCode = "404", description = "User not found")})
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     public ItemDto create(@RequestHeader(HEADER_USER_ID) long userId,
                           @Validated(ItemOnCreate.class) @RequestBody ItemDto item) {
         log.info("Получен запрос на создание вещи");
@@ -51,14 +51,15 @@ import java.util.List;
     }
 
     @GetMapping("/{itemId}")
-    @Operation(summary = "Получение пользователя по id")
+    @Operation(summary = "Получение вещи по id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Item get"),
             @ApiResponse(responseCode = "404", description = "Item not found")
     })
-    public ItemDto get(@PathVariable long itemId) {
+    public ItemDto get(@PathVariable long itemId,
+                       @RequestHeader(HEADER_USER_ID) Long userId) {
         log.info("Получен запрос на получение вещи с id {}", itemId);
-        return itemService.get(itemId);
+        return itemService.get(itemId, userId);
     }
 
     @GetMapping
@@ -67,7 +68,7 @@ import java.util.List;
             @ApiResponse(responseCode = "200", description = "Items get"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public List<ItemDto> getAll(@RequestHeader(HEADER_USER_ID) Long userId) {
+    public Set<ItemDto> getAll(@RequestHeader(HEADER_USER_ID) Long userId) {
         log.info("Получен запрос на получение всех вещей пользователя {}", userId);
         return itemService.getAllByOwner(userId);
     }
@@ -77,13 +78,26 @@ import java.util.List;
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Items found")
     })
-    public List<ItemDto> search(@RequestParam String text) {
+    public Set<ItemDto> search(@RequestParam String text) {
         if (text.isBlank()) {
             log.info("Получен запрос на поиск с пустым значением в запросе");
-            return List.of();
+            return new HashSet<>();
         } else {
             log.info("Получен запрос на поиск с текстом {}", text);
             return itemService.search(text);
         }
+    }
+
+    @PostMapping("/{itemId}/comment")
+    @Operation(summary = "Поиск по вещам")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Comment successful append"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
+    public CommentDto addComment(@RequestHeader(HEADER_USER_ID) Long userId,
+                                 @PathVariable long itemId,
+                                 @Valid @RequestBody CommentDto commentDto) {
+        log.info("Получен запрос на добавления комментария к вещи с id {}", itemId);
+        return itemService.addComment(userId, itemId, commentDto);
     }
 }
