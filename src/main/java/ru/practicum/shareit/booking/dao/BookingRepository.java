@@ -1,41 +1,75 @@
 package ru.practicum.shareit.booking.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import ru.practicum.shareit.booking.model.BookingStatus;
+import org.springframework.data.jpa.repository.Query;
+import ru.practicum.shareit.booking.dto.BookingSearch;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.Status;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
-public interface BookingRepository extends JpaRepository<BookingEntity, Long> {
-    Set<BookingEntity> findBookingEntitiesByBooker_Id(Long userid);
+public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    Set<BookingEntity> findBookingEntitiesByBooker_IdAndStartBeforeAndEndIsAfter(
-            Long userId, LocalDateTime now1, LocalDateTime now2);
+    @Query("select new ru.practicum.shareit.booking.dto.BookingSearch(b.id, b.start, b.finish, b.status, b.item, b.item.id, b.booker) " +
+            "from Booking as b " +
+            "where b.id = ?1 and (b.item.owner.id = ?2 or b.booker.id = ?3)")
+    Optional<BookingSearch> findBooking(long bookingId, long userId, long userId1);
 
-    Set<BookingEntity> findBookingEntitiesByBooker_IdAndEndBefore(Long userid, LocalDateTime now);
+    @Query("select new ru.practicum.shareit.booking.dto.BookingSearch(b.id, b.start, b.finish, b.status, b.item, b.item.id, b.booker) " +
+            "from Booking as b " +
+            "where b.booker.id = ?1 and b.finish > now() and b.start < now() " +
+            "order by b.start desc ")
+    List<BookingSearch> findAllByBookerIdAndStateCurrent(long userId);
 
-    Set<BookingEntity> findBookingEntitiesByBooker_IdAndStartAfter(Long userid, LocalDateTime now);
+    List<BookingSearch> findAllByBookerIdAndStatusOrderByStartDesc(long userId, Status state);
 
-    Set<BookingEntity> findBookingEntitiesByBooker_IdAndStatus(Long userid, BookingStatus bookingStatus);
 
-    Set<BookingEntity> findBookingEntitiesByItem_OwnerId(Long itemOwnerId);
+    List<BookingSearch> findAllByItemOwnerIdAndStatusOrderByStartDesc(long userId, Status status);
 
-    Set<BookingEntity> findBookingEntitiesByItem_OwnerIdAndStartBeforeAndEndAfter(
-            Long itemOwnerId, LocalDateTime start, LocalDateTime end);
+    List<BookingSearch> findAllByItemOwnerIdOrderByStartDesc(long userId);
 
-    Set<BookingEntity> findBookingEntitiesByItem_OwnerIdAndEndBefore(Long itemOwnerId, LocalDateTime end);
+    Optional<Booking> findByIdAndItemOwnerId(Long bookingId, Long userId);
 
-    Set<BookingEntity> findBookingEntitiesByItem_OwnerIdAndStartAfter(Long itemOwnerId, LocalDateTime start);
+    boolean existsByItemOwnerIdOrBookerId(Long userId, Long userId1);
 
-    Set<BookingEntity> findBookingEntitiesByItem_OwnerIdAndStatus(Long itemOwnerId, BookingStatus status);
+    List<Booking> findAllByItemOwnerIdOrderByStart(Long userId);
 
-    Optional<BookingEntity> findTopBookingEntitiesByItem_IdAndStartBeforeAndStatusOrderByEndDesc(
-            Long itemId, LocalDateTime end, BookingStatus status);
+    List<BookingSearch> findAllByBookerIdOrderByStartDesc(long userId);
 
-    Optional<BookingEntity> findTopBookingEntitiesByItem_IdAndStartAfterAndStatusOrderByStartAsc(
-            Long itemId, LocalDateTime start, BookingStatus status);
+    @Query("select new ru.practicum.shareit.booking.dto.BookingSearch(b.id, b.start, b.finish, b.status, b.item, b.item.id, b.booker) " +
+            "from Booking as b " +
+            "where b.booker.id = ?1 and b.status = ?2 and b.finish < now() " +
+            "order by b.start desc ")
+    List<BookingSearch> findAllByBookerIdAndStatePast(long userId, Status status);
 
-    Optional<BookingEntity> findTopBookingEntitiesByItem_IdAndBooker_IdAndEndBefore(
-            Long itemId, Long bookerId, LocalDateTime end);
+    @Query("select new ru.practicum.shareit.booking.dto.BookingSearch(b.id, b.start, b.finish, b.status, b.item, b.item.id, b.booker) " +
+            "from Booking as b " +
+            "where b.booker.id = ?1 and b.start > now() " +
+            "order by b.start desc ")
+    List<BookingSearch> findAllByBookerIdAndStateFuture(long userId);
+
+    @Query("select new ru.practicum.shareit.booking.dto.BookingSearch(b.id, b.start, b.finish, b.status, b.item, b.item.id, b.booker) " +
+            "from Booking as b " +
+            "where b.item.owner.id = ?1 and b.finish > now() and b.start < now() " +
+            "order by b.start desc ")
+    List<BookingSearch> findAllByItemOwnerAndStateCurrent(long userId);
+
+    @Query("select new ru.practicum.shareit.booking.dto.BookingSearch(b.id, b.start, b.finish, b.status, b.item, b.item.id, b.booker) " +
+            "from Booking as b " +
+            "where b.item.owner.id = ?1 and b.finish < now() and b.status =?2 " +
+            "order by b.start desc ")
+    List<BookingSearch> findAllByItemOwnerIdAndStatePast(long userId, Status status);
+
+    @Query("select new ru.practicum.shareit.booking.dto.BookingSearch(b.id, b.start, b.finish, b.status, b.item, b.item.id, b.booker) " +
+            "from Booking as b " +
+            "where b.item.owner.id = ?1 and b.start > now() and not b.status =?2 " +
+            "order by b.start desc ")
+    List<BookingSearch> findAllByItemOwnerIdAndStateFuture(long userId, Status status);
+
+    List<Booking> findAllByItemIdAndItemOwnerIdAndStatusOrderByStart(Long itemId, Long userId, Status status);
+
+    Optional<BookingSearch> findFirstByItemIdAndBookerIdAndStatusAndFinishBefore(Long itemId, Long userId, Status status, LocalDateTime timeNow);
+
 }
