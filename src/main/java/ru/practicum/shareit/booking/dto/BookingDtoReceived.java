@@ -21,8 +21,6 @@ public class BookingDtoReceived {
     @FutureOrPresent(groups = {Marker.Create.class})
     private LocalDateTime start;
 
-    @NotNull(groups = {Marker.Create.class})
-    @Future(groups = {Marker.Create.class})
     private LocalDateTime end;
 
     @NotNull(groups = {Marker.Create.class})
