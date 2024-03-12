@@ -2,51 +2,56 @@ package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.user.dao.UserDao;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.mappers.UserMapper;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.exception.EntityNotFoundException;
+import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
+    private final UserRepository userRepository;
 
-    private final UserDao userDao;
-
+    @Transactional
     @Override
-    public UserDto create(UserDto user) {
-        User newUser = UserMapper.USER_MAPPER.fromDto(user);
-        return UserMapper.USER_MAPPER
-                .toDto(userDao.create(newUser));
+    public User createUser(User user) {
+        return userRepository.save(user);
     }
 
     @Override
-    public UserDto update(UserDto user, Long id) {
-        User updateUser = UserMapper.USER_MAPPER.fromDto(user);
-        return UserMapper.USER_MAPPER
-                .toDto(userDao.update(updateUser, id));
+    public User findUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
+    }
+
+    @Transactional
+    @Override
+    public User updateUser(Long userId, User user) {
+        User userOld = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
+        String email = user.getEmail();
+        String name = user.getName();
+
+        if (name != null && !name.isBlank()) {
+            userOld.setName(name);
+        }
+        if (email != null && !email.isBlank()) {
+            userOld.setEmail(email);
+        }
+        return userOld;
+    }
+
+    @Transactional
+    @Override
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
     }
 
     @Override
-    public UserDto getById(Long id) {
-        return UserMapper.USER_MAPPER
-                .toDto(userDao.getUserById(id));
-    }
-
-    @Override
-    public List<UserDto> getAll() {
-        return userDao.getAll().stream()
-                .map(UserMapper.USER_MAPPER::toDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        userDao.deleteById(id);
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 
 }
