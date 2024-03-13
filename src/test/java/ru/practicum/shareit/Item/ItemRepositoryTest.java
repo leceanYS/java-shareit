@@ -34,6 +34,9 @@ public class ItemRepositoryTest {
     @Autowired
     private ItemRequestRepository itemRequestRepository;
 
+    //изначально хотел воспользоваться методами beforeEach, afterEach, но из-за присвоения бд id
+    // не всегда можно отловить в каком методе какой id будет у сущности
+
 
     private long userId = 1L;
     private long itemId = 1L;

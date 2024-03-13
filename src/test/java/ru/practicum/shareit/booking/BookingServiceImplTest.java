@@ -44,6 +44,7 @@ public class BookingServiceImplTest {
     @InjectMocks
     private BookingServiceImpl bookingService;
 
+
     @Test
     void postBooking() {
         long userId = 1L;
@@ -191,11 +192,8 @@ public class BookingServiceImplTest {
         int from = 0;
         int size = 10;
 
-        User user = User.builder().id(userId).build();
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-
-        assertThrows(EntityNotFoundException.class, () -> bookingService.findListBooking(userId, State.TEST, from, size));
+        assertThrows(IllegalArgumentException.class, () ->
+                bookingService.findListBooking(userId, State.valueOf("Error"), from, size));
     }
 
     @Test
@@ -243,10 +241,7 @@ public class BookingServiceImplTest {
         int from = 0;
         int size = 10;
 
-        User user = User.builder().id(userId).build();
-
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-
-        assertThrows(EntityNotFoundException.class, () -> bookingService.findListOwnerBooking(userId, State.TEST, from, size));
+        assertThrows(IllegalArgumentException.class, () ->
+                bookingService.findListOwnerBooking(userId, State.valueOf("Error"), from, size));
     }
 }

@@ -35,6 +35,8 @@ public class CommentRepositoryTest {
     @Autowired
     BookingRepository bookingRepository;
 
+    //тоже самое, что и с тестами itemRepository
+
     long itemId = 1L;
     long userId = 1L;
 
