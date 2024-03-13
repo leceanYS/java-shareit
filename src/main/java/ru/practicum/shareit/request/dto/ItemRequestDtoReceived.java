@@ -3,15 +3,17 @@ package ru.practicum.shareit.request.dto;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import javax.validation.constraints.NotBlank;
+
 
 @Data
 @Builder
-public class ItemRequestDto {
+public class ItemRequestDtoReceived {
 
-    private Long id;
+    private Long userId;
 
+    @NotBlank
     private String description;
 
-    private LocalDateTime created;
+
 }
