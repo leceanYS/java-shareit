@@ -59,5 +59,4 @@ public class BookingMapper {
                 .finish(bookingDtoReceived.getEnd())
                 .build();
     }
-
 }

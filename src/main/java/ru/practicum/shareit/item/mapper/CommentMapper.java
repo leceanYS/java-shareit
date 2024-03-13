@@ -57,9 +57,4 @@ public class CommentMapper {
     }
 
 
-    public Comment toCommentFromCommentDtoReceived(CommentDtoReceived comment) {
-        return Comment.builder()
-                .text(comment.getText())
-                .build();
-    }
 }

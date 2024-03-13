@@ -48,19 +48,15 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> findListBooking(@RequestHeader("X-Sharer-User-Id") @Min(0) final long userId,
-                                            @RequestParam(defaultValue = "ALL") State state,
-                                            @RequestParam(defaultValue = "0") @Min(0)  int from,
-                                            @RequestParam(defaultValue = "10") @Min(1)  int size) {
-        List<BookingSearch> listBooking = bookingService.findListBooking(userId, state, from, size);
+                                            @RequestParam(defaultValue = "ALL") State state) {
+        List<BookingSearch> listBooking = bookingService.findListBooking(userId, state);
         return BookingMapper.fromBookingSearchToDtoList(listBooking);
     }
 
     @GetMapping("/owner")
     public List<BookingDto> findOwnerBooking(@RequestHeader("X-Sharer-User-Id") @Min(0) final long userId,
-                                             @RequestParam(defaultValue = "ALL") State state,
-                                             @RequestParam(defaultValue = "0") @Min(0)  int from,
-                                             @RequestParam(defaultValue = "10") @Min(1)  int size) {
-        List<BookingSearch> listBooking = bookingService.findListOwnerBooking(userId, state, from, size);
+                                             @RequestParam(defaultValue = "ALL") State state) {
+        List<BookingSearch> listBooking = bookingService.findListOwnerBooking(userId, state);
         return BookingMapper.fromBookingSearchToDtoList(listBooking);
     }
 

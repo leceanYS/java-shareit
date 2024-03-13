@@ -1,9 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dao.BookingRepository;
@@ -74,48 +71,42 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingSearch> findListBooking(long userId, State state, int from, int size) {
+    public List<BookingSearch> findListBooking(long userId, State state) {
         userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("Юзер не найден"));
-
-        Pageable pageable = PageRequest.of(from > 0 ? from/size : 0, size, Sort.by("start").descending());
-
         switch (state) {
             case CURRENT:
-                return bookingRepository.findAllByBookerIdAndStateCurrent(userId, pageable);
+                return bookingRepository.findAllByBookerIdAndStateCurrent(userId);
             case PAST:
-                return bookingRepository.findAllByBookerIdAndStatePast(userId, Status.APPROVED, pageable);
+                return bookingRepository.findAllByBookerIdAndStatePast(userId, Status.APPROVED);
             case FUTURE:
-                return bookingRepository.findAllByBookerIdAndStateFuture(userId, pageable);
+                return bookingRepository.findAllByBookerIdAndStateFuture(userId);
             case WAITING:
-                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING, pageable);
+                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
             case REJECTED:
-                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED, pageable);
+                return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
             case ALL:
-                return bookingRepository.findAllByBookerIdOrderByStartDesc(userId, pageable);
+                return bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
             default:
                 throw new EntityNotFoundException("Неверный запрос");
         }
     }
 
     @Override
-    public List<BookingSearch> findListOwnerBooking(long userId, State state, int from, int size) {
+    public List<BookingSearch> findListOwnerBooking(long userId, State state) {
         userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("Юзер не найден"));
-
-        Pageable pageable = PageRequest.of(from > 0 ? from/size : 0, size, Sort.by("start").descending());
-
         switch (state) {
             case CURRENT:
-                return bookingRepository.findAllByItemOwnerAndStateCurrent(userId, pageable);
+                return bookingRepository.findAllByItemOwnerAndStateCurrent(userId);
             case PAST:
-                return bookingRepository.findAllByItemOwnerIdAndStatePast(userId, Status.APPROVED, pageable);
+                return bookingRepository.findAllByItemOwnerIdAndStatePast(userId, Status.APPROVED);
             case FUTURE:
-                return bookingRepository.findAllByItemOwnerIdAndStateFuture(userId, Status.REJECTED, pageable);
+                return bookingRepository.findAllByItemOwnerIdAndStateFuture(userId, Status.REJECTED);
             case WAITING:
-                return bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.WAITING, pageable);
+                return bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
             case REJECTED:
-                return bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.REJECTED, pageable);
+                return bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
             case ALL:
-                return bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId, pageable);
+                return bookingRepository.findAllByItemOwnerIdOrderByStartDesc(userId);
             default:
                 throw new EntityNotFoundException("Неверный запрос");
         }

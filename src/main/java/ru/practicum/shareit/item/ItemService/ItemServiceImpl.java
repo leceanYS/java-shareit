@@ -1,8 +1,6 @@
 package ru.practicum.shareit.item.ItemService;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dao.BookingRepository;
@@ -83,7 +81,6 @@ public class ItemServiceImpl implements ItemService {
     public Item updateItem(Long userId, Long itemId, Item item) {
         Item newItem = itemRepository.findByIdAndOwnerId(itemId, userId)
                 .orElseThrow(() -> new EntityNotFoundException("Предмет не найден"));
-
         String name = item.getName();
         String description = item.getDescription();
         Boolean available = item.getAvailable();
@@ -100,11 +97,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemWithBookingAndComment> findAllItemByUser(Long userId, int from, int size) {
+    public List<ItemWithBookingAndComment> findAllItemByUser(Long userId) {
 
-        Pageable pageable = PageRequest.of(from > 0 ? from/size : 0, size);
-
-        List<ItemWithBookingAndComment> result = itemRepository.findAllByOwnerId(userId, pageable)
+        List<ItemWithBookingAndComment> result = itemRepository.findAllByOwnerId(userId)
                 .stream()
                 .map(a -> ItemMapper.itemWithBooking(a))
                 .collect(Collectors.toList());
@@ -151,36 +146,23 @@ public class ItemServiceImpl implements ItemService {
 }
 
     @Override
-    public List<ItemSearch> search(Long userId, String text, int from, int size) {
-
-        Pageable pageable = PageRequest.of(from > 0 ? from/size : 0, size);
-
+    public List<ItemSearch> search(Long userId, String text) {
         if (text.isBlank()) {
             return List.of();
         }
-        return itemRepository.findItemSearch(text, text, pageable);
+        return itemRepository.findItemSearch(text, text);
     }
 
     @Transactional
     @Override
     public Comment createComment(Long userId, Long itemId, Comment newComment) {
         final LocalDateTime timeNow = LocalDateTime.now();
-
-        Pageable pageable = PageRequest.of(0, 1);
-        //здесь использовал лист из-за того, что почему то в сравнении с превидущим тз здесь хибер ругается на отсутствие конвертируемого класса
-        //то есть хочет чтобы я явно указал в какой класс следует сохранить, однако, на сколько я понял функции limit в хибере нет
-        //и findFirst не используешь
-        //и чтобы указать, что нужно взять именно одно значение воспользовался Pageable, а он может сохранят только в лист и страницу
-        List<BookingSearch> bookingList = bookingRepository.findFirstByItemIdAndBookerIdAndStatusAndFinishBefore(itemId, userId,
-                        Status.APPROVED, pageable);
-        if (bookingList.isEmpty()) {
-            throw new CommentException("Пользователь не бронировал вещь");
-        }
-        BookingSearch booking = bookingList.get(0);
-
+        BookingSearch booking = bookingRepository.findFirstByItemIdAndBookerIdAndStatusAndFinishBefore(itemId, userId,
+                        Status.APPROVED, timeNow)
+                .orElseThrow(() -> new CommentException("Пользователь не бронировал вещь"));
             Comment comment = Comment.builder()
                     .item(booking.getItem())
-                    .create(timeNow)
+                    .create(LocalDateTime.now())
                     .user(booking.getBooker())
                     .text(newComment.getText())
                     .build();
