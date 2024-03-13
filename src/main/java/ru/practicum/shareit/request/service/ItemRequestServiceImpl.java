@@ -1,6 +1,9 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.EntityNotFoundException;
@@ -14,7 +17,6 @@ import ru.practicum.shareit.user.dao.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +31,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRepository itemRepository;
 
     @Override
+    @Transactional
     public ItemRequest addRequest(ItemRequest request, Long userId) {
         userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("Пользователь не найден"));
         request.setUserId(userId);
@@ -37,25 +40,87 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestWithItems> findListRequest(long userId) {
-        List<ItemRequestWithItems> listRequestWithItems = RequestMapper.toListItemRequestWithItemsFromItemRequestSearch(itemRequestRepository.findAllByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Пользователь не найден")));
+    public List<ItemRequestWithItems> findListRequest(long userId, int from, int size) {
+        checkUser(userId);
 
-        List<String> listRequestId = listRequestWithItems.stream().map(ItemRequestWithItems::getId).map(Objects::toString).collect(Collectors.toList());
-        String query = String.join(",", listRequestId);
+        Pageable pageable = PageRequest.of(from, size, Sort.by("created").ascending());
 
-        Map<Long, List<Item>> mapItem = itemRepository.findAllByRequestId(query).stream()
-                .collect(Collectors.groupingBy(item -> item.getRequestId(), Collectors.toList()));
+        List<ItemRequestWithItems> listRequestWithItems = RequestMapper
+            .toListItemRequestWithItemsFromItemRequestSearch(itemRequestRepository.findAllByUserIdNotOrderByCreated(userId, pageable));
 
-        listRequestWithItems.stream()
-                .forEach(request -> {
-                    List<Item> listItem = mapItem.getOrDefault(request.getId(), List.of());
+        List<Long> listRequestId = listRequestWithItems.stream().map(ItemRequestWithItems::getId).collect(Collectors.toList());
 
-                    request.addItems(listItem);
-                });
+        List<Item> allByRequestIds = itemRepository.findAllByRequestIds(listRequestId);
+
+        if (!allByRequestIds.isEmpty()) {
+            Map<Long, List<Item>> mapItem = allByRequestIds.stream()
+                    .collect(Collectors.groupingBy(item -> item.getRequestId(), Collectors.toList()));
+
+            listRequestWithItems.stream()
+                    .forEach(request -> {
+                        List<Item> listItem = mapItem.getOrDefault(request.getId(), List.of());
+
+                        request.addItems(listItem);
+                    });
+        } else {
+            listRequestWithItems.stream()
+                    .forEach(a -> a.addItems(allByRequestIds));
+
+        }
+
+        return listRequestWithItems;
+
+    }
+
+    @Override
+    public List<ItemRequestWithItems> findListRequestUser(long userId) {
+        checkUser(userId);
+
+        List<ItemRequestWithItems> listRequestWithItems =
+                RequestMapper.toListItemRequestWithItemsFromItemRequestSearch(itemRequestRepository.findAllByUserId(userId));
+
+        List<Long> listRequestId = listRequestWithItems.stream().map(ItemRequestWithItems::getId).collect(Collectors.toList());
+
+        List<Item> allByRequestIds = itemRepository.findAllByRequestIds(listRequestId);
+
+        if (!allByRequestIds.isEmpty()) {
+            Map<Long, List<Item>> mapItem = allByRequestIds.stream()
+                    .collect(Collectors.groupingBy(item -> item.getRequestId(), Collectors.toList()));
+
+            listRequestWithItems.stream()
+                    .forEach(request -> {
+                        List<Item> listItem = mapItem.getOrDefault(request.getId(), List.of());
+
+                        request.addItems(listItem);
+                    });
+        } else {
+            listRequestWithItems.stream()
+                    .forEach(a -> a.addItems(allByRequestIds));
+
+        }
 
         return listRequestWithItems;
     }
 
+    @Override
+    public ItemRequestWithItems findItemRequest(long userId, long requestId) {
+        checkUser(userId);
+
+        ItemRequestWithItems request = RequestMapper
+                .toItemRequestWithItemsFromItemRequestSearch(itemRequestRepository.findById(requestId)
+                .orElseThrow(() -> new EntityNotFoundException("Нет запроса с данным айди")));
+
+        List<Item> listItem = itemRepository.findAllByRequestId(requestId);
+
+        request.addItems(listItem);
+        return request;
+    }
+
+    private void checkUser(long userId) {
+        boolean answer = userRepository.existsById(userId);
+        if (!answer) {
+            throw new EntityNotFoundException("Пользователь не найден");
+        }
+    }
 
 }

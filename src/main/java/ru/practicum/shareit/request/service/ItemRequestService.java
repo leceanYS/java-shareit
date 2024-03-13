@@ -9,5 +9,9 @@ public interface ItemRequestService {
 
     ItemRequest addRequest(ItemRequest request, Long userId);
 
-    List<ItemRequestWithItems> findListRequest(long userId);
+    List<ItemRequestWithItems> findListRequest(long userId, int from, int size);
+
+    List<ItemRequestWithItems> findListRequestUser(long userId);
+
+    ItemRequestWithItems findItemRequest(long userId, long requestId);
 }
