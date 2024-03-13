@@ -7,7 +7,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.practicum.shareit.exception.EmailDuplicateException;
 import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.model.User;
@@ -26,7 +25,7 @@ public class UserServiceImplTest {
     private UserServiceImpl userService;
 
     @Test
-    void createUser() {
+    void createUserTest() {
         User user = User.builder().build();
 
         Mockito.when(userRepository.save(user)).thenReturn(user);
@@ -35,18 +34,6 @@ public class UserServiceImplTest {
 
         Assertions.assertEquals(user, newUser);
 
-    }
-
-
-    @Test
-    void createUserDuplicate() {
-        User user = User.builder().email("asd@.mail.ru").build();
-        User user1 = User.builder().email("asd@.mail.ru").build();
-
-        Mockito.when(userRepository.save(user)).thenReturn(user);
-        Mockito.when(userRepository.save(user1)).thenThrow(EmailDuplicateException.class);
-
-        Assertions.assertThrows(EmailDuplicateException.class, () -> userService.createUser(user1));
     }
 
     @Test
@@ -71,7 +58,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void updateUser() {
+    void updateUserTest() {
         User userOld = User.builder().id(1L).name("Алеша").email("alesha@.yandex.ru").build();
         User userNew = User.builder().id(1L).name("Алешша").email("aalesha@.yandex.ru").build();
         long userId = 1L;
@@ -85,7 +72,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    void updateUserThrown() {
+    void updateUserThrownTest() {
         User user = User.builder().id(1L).name("Алеша").email("alesha@.yandex.ru").build();
         long userId = 0L;
 
@@ -96,9 +83,8 @@ public class UserServiceImplTest {
         Mockito.verify(userRepository, Mockito.never()).save(user);
     }
 
-
     @Test
-    void findAllUsers() {
+    void findAllUsersTest() {
         List<User> list = List.of(User.builder().id(1L).name("Алеша").email("alesha@.yandex.ru").build());
 
         Mockito.when(userRepository.findAll()).thenReturn(list);

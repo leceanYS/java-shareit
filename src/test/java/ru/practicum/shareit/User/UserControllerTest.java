@@ -31,7 +31,7 @@ public class UserControllerTest {
     private long userId = 1L;
 
     @Test
-    void createUser() {
+    void createUserTest() {
         User user = UserMapper.toUser(userDto);
         Mockito.when(userService.createUser(user)).thenReturn(user);
 
@@ -41,7 +41,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void updateUser() {
+    void updateUserTest() {
         User user = UserMapper.toUser(userDto);
         user.setName("Григорий");
         Mockito.when(userService.updateUser(userId, user)).thenReturn(user);
@@ -52,7 +52,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void findAllUsers() {
+    void findAllUsersTest() {
         User user = UserMapper.toUser(userDto);
         List<User> listUser = List.of(user);
 
@@ -64,7 +64,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void findUser() {
+    void findUserTest() {
         User user = UserMapper.toUser(userDto);
 
         Mockito.when(userService.findUserById(userId)).thenReturn(user);
@@ -75,7 +75,7 @@ public class UserControllerTest {
     }
 
     @Test
-    void deleteUser() {
+    void deleteUserTest() {
 
         userController.deleteUser(userId);
         Mockito.verify(userService, Mockito.times(1)).deleteUser(userId);

@@ -46,7 +46,6 @@ public class BookingControllerITTest {
     private Item item;
 
     private long itemId = 1L;
-
     private long userId = 1L;
 
     private long bookingId = 1L;
@@ -56,7 +55,6 @@ public class BookingControllerITTest {
     private LocalDateTime finish;
 
     private Booking booking;
-
     @BeforeEach
     void before() {
         user = User.builder().id(userId).name("dgs").email("fdsjnfj@mail.com").build();
@@ -79,7 +77,7 @@ public class BookingControllerITTest {
 
     @SneakyThrows
     @Test
-    void postBooking() {
+    void postBookingTest() {
         BookingDtoReceived bookingDtoReceived = BookingDtoReceived.builder()
                 .itemId(itemId)
                 .start(start)
@@ -106,7 +104,7 @@ public class BookingControllerITTest {
 
     @SneakyThrows
     @Test
-    void approvedBooking() {
+    void approvedBookingTest() {
         boolean approved = true;
 
         BookingDto bookingDto = BookingMapper.toBookingDto(booking);
@@ -130,7 +128,7 @@ public class BookingControllerITTest {
 
     @SneakyThrows
     @Test
-    void findBooking() {
+    void findBookingTest() {
 
         BookingSearch booking = BookingSearch.builder()
                 .item(item)
@@ -160,7 +158,7 @@ public class BookingControllerITTest {
 
     @SneakyThrows
     @Test
-    void findListBooking() {
+    void findListBookingTest() {
         State state = State.ALL;
         int from = 1;
         int size = 10;
@@ -178,7 +176,7 @@ public class BookingControllerITTest {
 
     @SneakyThrows
     @Test
-    void findOwnerBooking() {
+    void findOwnerBookingTest() {
         State state = State.ALL;
         int from = 1;
         int size = 10;

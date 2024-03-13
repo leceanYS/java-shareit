@@ -34,6 +34,9 @@ public class ItemRepositoryTest {
     @Autowired
     private ItemRequestRepository itemRequestRepository;
 
+    //изначально хотел воспользоваться методами beforeEach, afterEach, но из-за присвоения бд id
+    // не всегда можно отловить в каком методе какой id будет у сущности
+
 
     private long userId = 1L;
     private long itemId = 1L;
@@ -48,7 +51,6 @@ public class ItemRepositoryTest {
 
     private ItemRequest itemRequest = ItemRequest.builder()
             .description("qwe").id(itemRequestId).userId(userId).created(LocalDateTime.now().withNano(0)).build();
-
     @BeforeEach
     void before() {
         user = userRepository.save(user);
@@ -71,7 +73,7 @@ public class ItemRepositoryTest {
     }
 
     @Test
-    void findAllByOwnerId() {
+    void findAllByOwnerIdTest() {
 
         List<Item> itemList = itemRepository.findAllByOwnerId(userId, pageable);
 
@@ -79,7 +81,7 @@ public class ItemRepositoryTest {
     }
 
     @Test
-    void findItemSearch() {
+    void findItemSearchTest() {
 
         String text = "as";
 
@@ -89,7 +91,7 @@ public class ItemRepositoryTest {
     }
 
     @Test
-    void findByIdAndOwnerId() {
+    void findByIdAndOwnerIdTest() {
 
         Optional<Item> byIdAndOwnerId = itemRepository.findByIdAndOwnerId(itemId, userId);
 
@@ -97,7 +99,7 @@ public class ItemRepositoryTest {
     }
 
     @Test
-    void findAllByRequestIds() {
+    void findAllByRequestIdsTest() {
         List<Long> list = List.of(itemRequestId);
 
         List<Item> allByRequestId = itemRepository.findAllByRequestIds(list);
@@ -106,7 +108,7 @@ public class ItemRepositoryTest {
     }
 
     @Test
-    void findAllByRequestId() {
+    void findAllByRequestIdTest() {
         List<Item> allByRequestId = itemRepository.findAllByRequestId(itemRequestId);
 
         assertNotEmpty(allByRequestId, "не пуст");

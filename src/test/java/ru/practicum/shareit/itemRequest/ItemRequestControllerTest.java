@@ -43,7 +43,7 @@ public class ItemRequestControllerTest {
     private long itemId = 1L;
 
     @Test
-    void addRequest() {
+    void addRequestTest() {
         ItemRequestDtoReceived itemRequestDtoReceived = ItemRequestDtoReceived.builder().build();
         ItemRequest itemRequest = ItemRequest.builder().build();
         ItemRequestDto itemRequestDto = RequestMapper.toRequestDto(itemRequest);
@@ -55,7 +55,7 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    void findListRequestUser() {
+    void findListRequestUserTest() {
 
         List<ItemRequestWithItems> list = List.of(item);
 
@@ -69,7 +69,7 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    void findListRequest() {
+    void findListRequestTest() {
         int from = 1;
         int size = 10;
 
@@ -85,7 +85,7 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    void findItemRequest() {
+    void findItemRequestTest() {
 
         when(itemRequestService.findItemRequest(userId, itemId)).thenReturn(item);
 

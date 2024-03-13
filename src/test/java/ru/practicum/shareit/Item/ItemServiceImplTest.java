@@ -10,27 +10,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import ru.practicum.shareit.booking.dao.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingSearch;
-import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.model.SmallBooking;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.exception.CommentException;
 import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.item.ItemService.ItemServiceImpl;
 import ru.practicum.shareit.item.dao.CommentRepository;
 import ru.practicum.shareit.item.dao.ItemRepository;
-import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemSearch;
-import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Comment;
-import ru.practicum.shareit.item.model.CommentReceiving;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemWithBookingAndComment;
 import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,7 +55,7 @@ public class ItemServiceImplTest {
     private long itemId = 1L;
 
     @Test
-    void createItem() {
+    void createItemTest() {
 
         User user = User.builder().build();
 
@@ -77,7 +71,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void findItem() {
+    void findItemTest() {
 
         Item item = Item.builder().build();
 
@@ -90,25 +84,13 @@ public class ItemServiceImplTest {
         ItemWithBookingAndComment itemWithBookingAndComment = itemService.findItem(userId, itemId);
 
         ItemWithBookingAndComment itemWithBookingAndCommentNew = ItemMapper.itemWithBooking(item);
-
-        Booking booking = Booking.builder()
-                .id(1L)
-                .item(Item.builder().id(1L).build())
-                .booker(User.builder().id(1L).build())
-                .build();
-
-        SmallBooking smallBooking = BookingMapper.toSmallBooking(booking);
-
-        itemWithBookingAndComment.addBooking(smallBooking, smallBooking);
-
-        itemWithBookingAndCommentNew.addBooking(smallBooking, smallBooking);
         itemWithBookingAndCommentNew.setComments(List.of());
 
         assertEquals(itemWithBookingAndComment, itemWithBookingAndCommentNew);
     }
 
     @Test
-    void findItemNotEntity() {
+    void findItemNotEntityTest() {
 
         when(itemRepository.findById(itemId)).thenThrow(EntityNotFoundException.class);
 
@@ -116,7 +98,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void updateItem() {
+    void updateItemTest() {
         Item item = Item.builder().build();
         Item newItem = Item.builder().name("asd").build();
 
@@ -129,7 +111,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void updateItemNotEntity() {
+    void updateItemNotEntityTest() {
         Item item = Item.builder().build();
 
         when(itemRepository.findByIdAndOwnerId(itemId, userId)).thenThrow(EntityNotFoundException.class);
@@ -139,7 +121,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void findAllItemByUser() {
+    void findAllItemByUserTest() {
         int from = 0;
         int size = 10;
         Pageable pageable = PageRequest.of(from, size);
@@ -162,7 +144,7 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void search() {
+    void searchTest() {
         String text = "asd";
         int from = 0;
         int size = 10;
@@ -178,18 +160,12 @@ public class ItemServiceImplTest {
     }
 
     @Test
-    void createComment() {
+    void createCommentTest() {
         int from = 0;
         int size = 1;
         Pageable pageable = PageRequest.of(from, size);
 
-        Comment newComment = Comment.builder()
-                .id(1L)
-                .create(LocalDateTime.now())
-                .text("asd")
-                .item(Item.builder().id(1L).build())
-                .user(User.builder().name("a").build())
-                .build();
+        Comment newComment = Comment.builder().build();
 
         BookingSearch booking = new BookingSearch();
 
@@ -200,17 +176,11 @@ public class ItemServiceImplTest {
 
         Comment comment = itemService.createComment(userId, itemId, newComment);
 
-        CommentReceiving commentReceiving = CommentMapper.fromCommentToCommentReceiving(comment);
-        CommentDto commentDto = CommentMapper.fromCommentRecrivingToCommentDto(commentReceiving);
-
-        CommentReceiving commentReceiving1 = CommentMapper.fromCommentToCommentReceiving(newComment);
-        CommentDto commentDto1 = CommentMapper.fromCommentRecrivingToCommentDto(commentReceiving1);
-
-        assertEquals(commentDto1, commentDto);
+        assertEquals(newComment, comment);
     }
 
     @Test
-    void createCommentNotEntity() {
+    void createCommentNotEntityTest() {
         int from = 0;
         int size = 1;
         Pageable pageable = PageRequest.of(from, size);
@@ -218,12 +188,11 @@ public class ItemServiceImplTest {
         Comment newComment = Comment.builder().build();
 
         when(bookingRepository.findFirstByItemIdAndBookerIdAndStatusAndFinishBefore(itemId, userId,
-                Status.APPROVED, pageable)).thenReturn(List.of());
+                Status.APPROVED, pageable)).thenThrow(CommentException.class);
 
         assertThrows(CommentException.class, () -> itemService.createComment(userId, itemId, newComment));
         verify(commentRepository, never()).save(newComment);
 
     }
-
 
 }

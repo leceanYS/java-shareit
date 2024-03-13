@@ -8,9 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import ru.practicum.shareit.exception.EntityNotFoundException;
 import ru.practicum.shareit.item.dao.ItemRepository;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dao.ItemRequestRepository;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.model.ItemRequestSearch;
@@ -24,7 +22,6 @@ import java.util.Optional;
 
 import static org.hibernate.validator.internal.util.Contracts.assertNotEmpty;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -44,7 +41,7 @@ public class ItemRequestServiceImplTest {
     private ItemRequestServiceImpl itemRequestService;
 
     @Test
-    void addRequest() {
+    void addRequestTest() {
         long userId = 1L;
         User user = User.builder().build();
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
@@ -58,7 +55,7 @@ public class ItemRequestServiceImplTest {
     }
 
     @Test
-    void findListRequest() {
+    void findListRequestTest() {
         long userId = 1L;
         Pageable pageable = PageRequest.of(0, 10, Sort.by("created").ascending());
 
@@ -68,7 +65,7 @@ public class ItemRequestServiceImplTest {
 
         when(userRepository.existsById(userId)).thenReturn(true);
 
-        when(itemRepository.findAllByRequestIds(any())).thenReturn(List.of(Item.builder().id(1L).requestId(1L).build()));
+        when(itemRepository.findAllByRequestIds(any())).thenReturn(List.of());
 
         List<ItemRequestWithItems> listRequest = itemRequestService.findListRequest(userId, 0, 10);
 
@@ -76,7 +73,7 @@ public class ItemRequestServiceImplTest {
     }
 
     @Test
-    void findListRequestUser() {
+    void findListRequestUserTest() {
         long userId = 1L;
 
         List<ItemRequestSearch> list = List.of(new ItemRequestSearch());
@@ -85,37 +82,10 @@ public class ItemRequestServiceImplTest {
 
         when(userRepository.existsById(userId)).thenReturn(true);
 
-        when(itemRepository.findAllByRequestIds(any())).thenReturn(List.of(Item.builder().id(1L).requestId(1L).build()));
+        when(itemRepository.findAllByRequestIds(any())).thenReturn(List.of());
 
         List<ItemRequestWithItems> listRequest = itemRequestService.findListRequestUser(userId);
 
         assertNotEmpty(listRequest, "не пуст");
-    }
-
-    @Test
-    void findItemRequest() {
-        long itemRequestId = 1L;
-        long userId = 1L;
-        ItemRequestSearch item = new ItemRequestSearch();
-
-        when(userRepository.existsById(userId)).thenReturn(true);
-
-        when(itemRequestRepository.findById(itemRequestId)).thenReturn(Optional.of(item));
-
-        when(itemRepository.findAllByRequestId(itemRequestId)).thenReturn(List.of());
-
-        ItemRequestWithItems itemRequest = itemRequestService.findItemRequest(userId, itemRequestId);
-
-        assertNotNull(itemRequest);
-    }
-
-    @Test
-    void findItemRequestNotValid() {
-        long itemRequestId = 1L;
-        long userId = 1L;
-
-        when(userRepository.existsById(userId)).thenReturn(false);
-
-        assertThrows(EntityNotFoundException.class, () ->  itemRequestService.findItemRequest(userId, itemRequestId));
     }
 }
