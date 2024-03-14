@@ -42,6 +42,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
 
     private final CommentRepository commentRepository;
+    private List<Long> itemIds;
 
     @Transactional
     @Override
@@ -104,14 +105,14 @@ public class ItemServiceImpl implements ItemService {
 
         Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
 
-        List<ItemWithBookingAndComment> result = itemRepository.findAllByOwnerId(userId, pageable)
+        List<ItemWithBookingAndComment> result = itemRepository.findAllByOwnerIdAndItemIdIn(userId, itemIds)
                 .stream()
                 .map(a -> ItemMapper.itemWithBooking(a))
                 .collect(Collectors.toList());
 
-        Map<Long, List<CommentReceiving>> listComment = commentRepository.findAllByUserId(userId)
+        Map<Long, List<CommentReceiving>> listComment = commentRepository.findAllByUserIdAndItemIdIn(userId, itemIds)
                 .stream()
-                .map(a -> CommentMapper.fromCommentToCommentReceiving(a))
+                .map(a -> CommentMapper.fromCommentToCommentReceiving((Comment) a))
                 .collect(Collectors.groupingBy(c -> c.getItem(), Collectors.toList()));
 
         Map<Long, List<Booking>> listBooking = bookingRepository.findAllByItemOwnerIdOrderByStart(userId)
@@ -167,10 +168,6 @@ public class ItemServiceImpl implements ItemService {
         final LocalDateTime timeNow = LocalDateTime.now();
 
         Pageable pageable = PageRequest.of(0, 1);
-        //здесь использовал лист из-за того, что почему то в сравнении с превидущим тз здесь хибер ругается на отсутствие конвертируемого класса
-        //то есть хочет чтобы я явно указал в какой класс следует сохранить, однако, на сколько я понял функции limit в хибере нет
-        //и findFirst не используешь
-        //и чтобы указать, что нужно взять именно одно значение воспользовался Pageable, а он может сохранят только в лист и страницу
         List<BookingSearch> bookingList = bookingRepository.findFirstByItemIdAndBookerIdAndStatusAndFinishBefore(itemId, userId,
                         Status.APPROVED, pageable);
         if (bookingList.isEmpty()) {
