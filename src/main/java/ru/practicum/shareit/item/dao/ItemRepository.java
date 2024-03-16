@@ -13,8 +13,6 @@ import java.util.Optional;
 public interface ItemRepository extends JpaRepository<Item, Long> {
     List<Item> findAllByOwnerId(Long userId, Pageable pageable);
 
-    List<Item> findAllByOwnerIdAndItemIdIn(Long ownerId, List<Long> itemIds);
-
     @Query("select new ru.practicum.shareit.item.dto.ItemSearch(it.id, it.name, it.description, it.available) " +
             "from Item as it " +
             "where it.available = true and (lower(it.name) like concat('%', lower(?1), '%') " +

@@ -22,30 +22,29 @@ import java.util.List;
 public class ItemRequestController {
 
     private final ItemRequestService itemRequestService;
-    private static final String HEADER_USER_ID = "X-Sharer-User-Id";
 
     @PostMapping
-    public ItemRequestDto addRequest(@RequestHeader(HEADER_USER_ID) @Min(0) long userId,
+    public ItemRequestDto addRequest(@RequestHeader("X-Sharer-User-Id") @Min(0) long userId,
                                      @RequestBody @Valid ItemRequestDtoReceived requestDto) {
         ItemRequest request = itemRequestService.addRequest(RequestMapper.toRequest(requestDto), userId);
         return RequestMapper.toRequestDto(request);
     }
 
     @GetMapping
-    public List<ItemRequestWithItemsDto> findListRequestUser(@RequestHeader(HEADER_USER_ID) @Min(0) long userId) {
+    public List<ItemRequestWithItemsDto> findListRequestUser(@RequestHeader("X-Sharer-User-Id") @Min(0) long userId) {
         List<ItemRequestWithItems> list = itemRequestService.findListRequestUser(userId);
         return RequestMapper.toListRequestWithItemsDto(list);
     }
 
     @GetMapping("/all")
-    public List<ItemRequestWithItemsDto> findListRequest(@RequestHeader(HEADER_USER_ID) @Min(0) long userId,
+    public List<ItemRequestWithItemsDto> findListRequest(@RequestHeader("X-Sharer-User-Id") @Min(0) long userId,
                                                          @Min(0) @RequestParam(defaultValue = "0")  int from,
                                                          @Min(1) @RequestParam(defaultValue = "10")  int size) {
         return RequestMapper.toListRequestWithItemsDto(itemRequestService.findListRequest(userId, from, size));
     }
 
     @GetMapping("/{requestId}")
-    public ItemRequestWithItemsDto findItemRequest(@RequestHeader(HEADER_USER_ID) @Min(0) long userId,
+    public ItemRequestWithItemsDto findItemRequest(@RequestHeader("X-Sharer-User-Id") @Min(0) long userId,
                                                    @PathVariable("requestId") @Min(0) long requestId) {
 
         return RequestMapper.toRequestWithItemsDto(itemRequestService.findItemRequest(userId, requestId));
