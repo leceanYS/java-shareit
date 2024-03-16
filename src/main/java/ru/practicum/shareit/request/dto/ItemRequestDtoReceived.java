@@ -11,8 +11,6 @@ import javax.validation.constraints.Size;
 @Builder
 public class ItemRequestDtoReceived {
 
-    private Long userId;
-
     @NotBlank
     @Size(min = 0, max = 255)
     private String description;
