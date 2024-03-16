@@ -47,6 +47,7 @@ public class ItemControllerITTest {
     private long itemId = 1L;
     private Item item = Item.builder().name("asd").available(true).description("asdf").build();
     private static final String HEADER_USER_ID = "X-Sharer-User-Id";
+
     @SneakyThrows
     @Test
     void createItem() {
