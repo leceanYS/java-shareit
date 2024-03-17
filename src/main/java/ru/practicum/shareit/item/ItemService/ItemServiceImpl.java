@@ -136,7 +136,7 @@ public class ItemServiceImpl implements ItemService {
 
                     SmallBooking nextBooking = listBooking.getOrDefault(item.getId(), List.of())
                             .stream()
-                            .filter(a -> a.getFinish().isAfter(timeNow))
+                            .filter(a -> !a.getFinish().isAfter(timeNow))
                             .findFirst()
                             .map(BookingMapper::toSmallBooking)
                             .orElse(null);
