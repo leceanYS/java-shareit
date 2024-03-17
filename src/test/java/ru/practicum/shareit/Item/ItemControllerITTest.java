@@ -3,7 +3,6 @@ package ru.practicum.shareit.Item;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -12,7 +11,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.practicum.shareit.item.ItemService.ItemService;
 import ru.practicum.shareit.item.controller.ItemController;
-import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemSearch;
@@ -45,8 +43,7 @@ public class ItemControllerITTest {
 
     @MockBean
     private ItemService itemService;
-    @Mock
-    private ItemRepository itemRepository;
+
     private long userId = 1L;
 
     private long itemId = 1L;
@@ -179,17 +176,18 @@ public class ItemControllerITTest {
     @Test
     void search() {
         String text = "asd";
-
         int from = 0;
         int size = 10;
 
         List<ItemSearch> list = List.of();
+
         when(itemService.search(userId, text, from, size)).thenReturn(list);
 
         mockMvc.perform(get("/items/search")
-                .header(HEADER_USER_ID, userId)
-                .param("text", text))
+                        .header(HEADER_USER_ID, userId)
+                        .param("text", text))
                 .andExpect(status().isOk());
+
         verify(itemService).search(userId, text, from, size);
     }
 
