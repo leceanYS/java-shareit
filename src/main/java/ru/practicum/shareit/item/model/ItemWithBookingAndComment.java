@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.model;
 import lombok.*;
 import ru.practicum.shareit.booking.model.SmallBooking;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -40,7 +41,7 @@ public class ItemWithBookingAndComment {
 
     public void addComments(List<CommentReceiving> list) {
         if (list.isEmpty()) {
-            comments = List.of();
+            comments = new ArrayList<>(); // Создайте новый пустой список
         } else {
             comments = list;
         }
