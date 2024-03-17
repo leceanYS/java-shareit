@@ -155,7 +155,7 @@ public class ItemControllerITTest {
     @SneakyThrows
     @Test
     void findAllItemByUser() {
-        List<ItemWithBookingAndComment> itemList =  List.of();
+        List<ItemWithBookingAndComment> itemList = List.of(new ItemWithBookingAndComment(null, null, null, null, null, null, null));
 
         int from = 0;
         int size = 10;
