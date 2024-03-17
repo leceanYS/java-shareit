@@ -22,6 +22,7 @@ import ru.practicum.shareit.item.model.ItemWithBookingAndComment;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -155,7 +156,7 @@ public class ItemControllerITTest {
     @SneakyThrows
     @Test
     void findAllItemByUser() {
-        List<ItemWithBookingAndComment> itemList = List.of(new ItemWithBookingAndComment(null, null, null, null, null, null, null));
+        List<ItemWithBookingAndComment> itemList = Collections.emptyList();
 
         int from = 0;
         int size = 10;
