@@ -156,7 +156,7 @@ public class ItemServiceImpl implements ItemService {
         if (text.isBlank()) {
             return List.of();
         }
-        return itemRepository.findItemSearch(text, "%"+text+"%", pageable);
+        return itemRepository.findItemSearch(text, "%" + text + "%", pageable);
     }
 
     @Transactional
