@@ -104,9 +104,14 @@ public class ItemServiceImpl implements ItemService {
 
         Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
 
-        List<ItemWithBookingAndComment> result = itemRepository.findAllByOwnerId(userId, pageable)
+        List<Long> itemIds = itemRepository.findAllByOwnerId(userId, pageable)
                 .stream()
-                .map(a -> ItemMapper.itemWithBooking(a))
+                .map(Item::getId)
+                .collect(Collectors.toList());
+
+        List<ItemWithBookingAndComment> result = itemRepository.findAllByIdIn(itemIds)
+                .stream()
+                .map(a -> ItemMapper.itemWithBooking((Item) a))
                 .collect(Collectors.toList());
 
         Map<Long, List<CommentReceiving>> listComment = commentRepository.findAllByUserId(userId)
@@ -115,7 +120,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.groupingBy(c -> c.getItem(), Collectors.toList()));
 
         Map<Long, List<Booking>> listBooking = bookingRepository.findAllByItemOwnerIdOrderByStart(userId)
-				.stream()
+                .stream()
                 .collect(Collectors.groupingBy(c -> c.getItem().getId(), Collectors.toList()));
 
         final LocalDateTime timeNow = LocalDateTime.now();
@@ -125,30 +130,22 @@ public class ItemServiceImpl implements ItemService {
                     SmallBooking lastBooking = listBooking.getOrDefault(item.getId(), List.of())
                             .stream()
                             .filter(a -> !a.getFinish().isAfter(timeNow))
-                            .reduce((a,b) -> b)
+                            .reduce((a, b) -> b)
                             .map(BookingMapper::toSmallBooking)
                             .orElse(null);
 
-                            SmallBooking nextBooking = listBooking.getOrDefault(item.getId(), List.of())
-                             .stream()
-                             .filter(a -> a.getFinish().isAfter(timeNow))
-                             .findFirst()
-                             .map(BookingMapper::toSmallBooking)
-                             .orElse(null);
+                    SmallBooking nextBooking = listBooking.getOrDefault(item.getId(), List.of())
+                            .stream()
+                            .filter(a -> a.getFinish().isAfter(timeNow))
+                            .findFirst()
+                            .map(BookingMapper::toSmallBooking)
+                            .orElse(null);
 
-                             item.addBooking(lastBooking, nextBooking);
-    });
-
-        result.stream()
-                .forEach(item -> {
-                    List<CommentReceiving> list  =
-                            listComment.getOrDefault(item.getId(), List.of());
-
-                    item.addComments(list);
+                    item.addBooking(lastBooking, nextBooking);
                 });
 
         return result;
-}
+    }
 
     @Override
     public List<ItemSearch> search(Long userId, String text, int from, int size) {
@@ -167,10 +164,6 @@ public class ItemServiceImpl implements ItemService {
         final LocalDateTime timeNow = LocalDateTime.now();
 
         Pageable pageable = PageRequest.of(0, 1);
-        //здесь использовал лист из-за того, что почему то в сравнении с превидущим тз здесь хибер ругается на отсутствие конвертируемого класса
-        //то есть хочет чтобы я явно указал в какой класс следует сохранить, однако, на сколько я понял функции limit в хибере нет
-        //и findFirst не используешь
-        //и чтобы указать, что нужно взять именно одно значение воспользовался Pageable, а он может сохранят только в лист и страницу
         List<BookingSearch> bookingList = bookingRepository.findFirstByItemIdAndBookerIdAndStatusAndFinishBefore(itemId, userId,
                         Status.APPROVED, pageable);
         if (bookingList.isEmpty()) {
