@@ -41,7 +41,7 @@ public class ItemWithBookingAndComment {
 
     public void addComments(List<CommentReceiving> list) {
         if (list.isEmpty()) {
-            comments = new ArrayList<>(); // Создайте новый пустой список
+            comments = new ArrayList<>();
         } else {
             comments = list;
         }

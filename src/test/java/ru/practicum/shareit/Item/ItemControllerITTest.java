@@ -167,7 +167,7 @@ public class ItemControllerITTest {
         mockMvc.perform(get("/items")
                         .header(HEADER_USER_ID, userId))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[]")); // Проверка, что возвращается пустой список
+                .andExpect(content().json("[]"));
 
         verify(itemService).findAllItemByUser(userId, from, size);
     }

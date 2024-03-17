@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ItemServiceImpl implements ItemService {
 
+    private List<Item> items;
 
     private final ItemRepository itemRepository;
 
@@ -101,7 +102,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemWithBookingAndComment> findAllItemByUser(Long userId, int from, int size) {
-
+        items.clear();
         Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
 
         List<Long> itemIds = itemRepository.findAllByOwnerId(userId, pageable)
