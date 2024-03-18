@@ -4,6 +4,7 @@ import lombok.*;
 import ru.practicum.shareit.marker.Marker;
 import ru.practicum.shareit.valid.StartBeforeEndDateValid;
 
+import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -20,6 +21,8 @@ public class BookingDtoReceived {
     @FutureOrPresent(groups = {Marker.Create.class})
     private LocalDateTime start;
 
+    @NotNull(groups = {Marker.Create.class})
+    @Future(groups = {Marker.Create.class})
     private LocalDateTime end;
 
     @NotNull(groups = {Marker.Create.class})
