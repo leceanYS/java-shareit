@@ -46,7 +46,6 @@ public class ItemControllerITTest {
 
     private long itemId = 1L;
     private Item item = Item.builder().name("asd").available(true).description("asdf").build();
-    private static final String HEADER_USER_ID = "X-Sharer-User-Id";
 
     @SneakyThrows
     @Test
@@ -58,7 +57,7 @@ public class ItemControllerITTest {
 
         String itemString = mockMvc.perform(post("/items", itemDto)
                 .contentType("application/json")
-                .header(HEADER_USER_ID, userId)
+                .header("X-Sharer-User-Id", userId)
                 .content(objectMapper.writeValueAsString(item)))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -83,7 +82,7 @@ public class ItemControllerITTest {
 
         mockMvc.perform(post("/items", itemDto)
                         .contentType("application/json")
-                        .header(HEADER_USER_ID, userId)
+                        .header("X-Sharer-User-Id", userId)
                         .content(objectMapper.writeValueAsString(item)))
                 .andExpect(status().isBadRequest())
                 .andReturn()
@@ -94,7 +93,7 @@ public class ItemControllerITTest {
 
         mockMvc.perform(post("/items", itemDto1)
                         .contentType("application/json")
-                        .header(HEADER_USER_ID, userId)
+                        .header("X-Sharer-User-Id", userId)
                         .content(objectMapper.writeValueAsString(item1)))
                 .andExpect(status().isBadRequest())
                 .andReturn()
@@ -105,7 +104,7 @@ public class ItemControllerITTest {
 
         mockMvc.perform(post("/items", itemDto2)
                         .contentType("application/json")
-                        .header(HEADER_USER_ID, userId)
+                        .header("X-Sharer-User-Id", userId)
                         .content(objectMapper.writeValueAsString(item2)))
                 .andExpect(status().isBadRequest())
                 .andReturn()
@@ -127,7 +126,7 @@ public class ItemControllerITTest {
         when(itemService.findItem(userId, itemId)).thenReturn(item);
 
         mockMvc.perform(get("/items/{itemId}", itemId)
-                .header(HEADER_USER_ID, userId))
+                .header("X-Sharer-User-Id", userId))
                 .andExpect(status().isOk());
 
         Mockito.verify(itemService, times(1)).findItem(userId, itemId);
@@ -142,7 +141,7 @@ public class ItemControllerITTest {
 
         String itemString = mockMvc.perform(MockMvcRequestBuilders.patch("/items/{itemId}", itemId)
                         .contentType("application/json")
-                        .header(HEADER_USER_ID, userId)
+                        .header("X-Sharer-User-Id", userId)
                         .content(objectMapper.writeValueAsString(item)))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -163,7 +162,7 @@ public class ItemControllerITTest {
         when(itemService.findAllItemByUser(userId, from, size)).thenReturn(itemList);
 
         mockMvc.perform(get("/items")
-                        .header(HEADER_USER_ID, userId))
+                        .header("X-Sharer-User-Id", userId))
                 .andExpect(status().isOk());
 
         verify(itemService).findAllItemByUser(userId, from, size);
@@ -181,7 +180,7 @@ public class ItemControllerITTest {
         when(itemService.search(userId, text, from, size)).thenReturn(list);
 
         mockMvc.perform(get("/items/search")
-                .header(HEADER_USER_ID, userId)
+                .header("X-Sharer-User-Id", userId)
                 .param("text", text))
                 .andExpect(status().isOk());
         verify(itemService).search(userId, text, from, size);
@@ -207,7 +206,7 @@ public class ItemControllerITTest {
 
         String commentString = mockMvc.perform(post("/items/{itemId}/comment", itemId)
                         .contentType("application/json")
-                        .header(HEADER_USER_ID, userId)
+                        .header("X-Sharer-User-Id", userId)
                         .content(objectMapper.writeValueAsString(comment)))
                         .andExpect(status().isOk())
                         .andReturn()
