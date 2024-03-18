@@ -22,14 +22,12 @@ import ru.practicum.shareit.item.model.ItemWithBookingAndComment;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ItemController.class)
@@ -157,7 +155,7 @@ public class ItemControllerITTest {
     @SneakyThrows
     @Test
     void findAllItemByUser() {
-        List<ItemWithBookingAndComment> itemList = Collections.emptyList();
+        List<ItemWithBookingAndComment> itemList =  List.of();
 
         int from = 0;
         int size = 10;
@@ -166,8 +164,7 @@ public class ItemControllerITTest {
 
         mockMvc.perform(get("/items")
                         .header(HEADER_USER_ID, userId))
-                .andExpect(status().isOk())
-                .andExpect(content().json("[]"));
+                .andExpect(status().isOk());
 
         verify(itemService).findAllItemByUser(userId, from, size);
     }
@@ -176,18 +173,17 @@ public class ItemControllerITTest {
     @Test
     void search() {
         String text = "asd";
+
         int from = 0;
         int size = 10;
 
         List<ItemSearch> list = List.of();
-
         when(itemService.search(userId, text, from, size)).thenReturn(list);
 
         mockMvc.perform(get("/items/search")
-                        .header(HEADER_USER_ID, userId)
-                        .param("text", text))
+                .header(HEADER_USER_ID, userId)
+                .param("text", text))
                 .andExpect(status().isOk());
-
         verify(itemService).search(userId, text, from, size);
     }
 

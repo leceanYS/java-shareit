@@ -163,19 +163,18 @@ public class ItemServiceImplTest {
 
     @Test
     void search() {
-        Long userId = 1L;
-        String text = "example";
+        String text = "asd";
         int from = 0;
         int size = 10;
-
         Pageable pageable = PageRequest.of(from, size);
-        List<ItemSearch> expectedSearchResults = List.of(new ItemSearch());
 
-        when(itemRepository.findItemSearch(eq(text), anyString(), eq(pageable))).thenReturn(expectedSearchResults);
+        List<ItemSearch> itenList = List.of(new ItemSearch());
 
-        List<ItemSearch> actualSearchResults = itemService.search(userId, text, from, size);
+        when(itemRepository.findItemSearch(text, text, pageable)).thenReturn(itenList);
 
-        assertEquals(expectedSearchResults, actualSearchResults);
+        List<ItemSearch> newList = itemService.search(userId, text, from, size);
+
+        assertEquals(newList, itenList);
     }
 
     @Test
