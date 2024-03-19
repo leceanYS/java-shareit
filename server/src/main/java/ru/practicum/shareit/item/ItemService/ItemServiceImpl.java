@@ -106,6 +106,7 @@ public class ItemServiceImpl implements ItemService {
 
         List<ItemWithBookingAndComment> result = itemRepository.findAllByOwnerId(userId, pageable)
                 .stream()
+                .sorted(Comparator.comparing(Item::getId))
                 .map(a -> ItemMapper.itemWithBooking(a))
                 .collect(Collectors.toList());
 
