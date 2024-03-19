@@ -14,6 +14,8 @@ import ru.practicum.dto.Marker;
 import javax.validation.constraints.Min;
 import java.util.List;
 
+import static ru.practicum.controller.BookingController.Constants.HEADER_USER_ID;
+
 
 @Controller
 @RequestMapping(path = "/items")
@@ -23,33 +25,35 @@ public class ItemController {
 
     private final ItemClient itemClient;
 
+
+
     @PostMapping
-    public ResponseEntity<Object> createItem(@RequestHeader("X-Sharer-User-Id") @Min(0) long userId,
+    public ResponseEntity<Object> createItem(@RequestHeader(HEADER_USER_ID) @Min(0) long userId,
                                              @Validated({Marker.Create.class}) @RequestBody ItemDto itemDto) {
         return itemClient.createItem(userId, itemDto);
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<Object> findItem(@RequestHeader("X-Sharer-User-Id") @Min(0) Long userId,
+    public ResponseEntity<Object> findItem(@RequestHeader(HEADER_USER_ID) @Min(0) Long userId,
                                                  @PathVariable("itemId") @Min(0) final Long itemId) {
         return itemClient.findItem(userId, itemId);
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<Object> updateItem(@RequestHeader("X-Sharer-User-Id") @Min(0) Long userId, @PathVariable("itemId") @Min(0) final Long itemId,
+    public ResponseEntity<Object> updateItem(@RequestHeader(HEADER_USER_ID) @Min(0) Long userId, @PathVariable("itemId") @Min(0) final Long itemId,
                               @Validated({Marker.Update.class}) @RequestBody ItemDto itemDto) {
         return itemClient.updateItem(userId, itemId, itemDto);
     }
 
     @GetMapping
-    public ResponseEntity<Object> findAllItemByUser(@RequestHeader("X-Sharer-User-Id") @Min(0) Long userId,
+    public ResponseEntity<Object> findAllItemByUser(@RequestHeader(HEADER_USER_ID) @Min(0) Long userId,
                                                                 @RequestParam(defaultValue = "0") @Min(0)  int from,
                                                                 @RequestParam(defaultValue = "10") @Min(1)  int size) {
         return itemClient.findAllItemByUser(userId, from, size);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> search(@RequestHeader("X-Sharer-User-Id") @Min(0) Long userId, @RequestParam String text,
+    public ResponseEntity<Object> search(@RequestHeader(HEADER_USER_ID) @Min(0) Long userId, @RequestParam String text,
                                 @RequestParam(defaultValue = "0") @Min(0)  int from,
                                 @RequestParam(defaultValue = "10") @Min(1)  int size) {
         boolean answer = text.isBlank();
@@ -61,7 +65,7 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<Object> createComment(@RequestHeader("X-Sharer-User-Id") @Min(0) Long userId,
+    public ResponseEntity<Object> createComment(@RequestHeader(HEADER_USER_ID) @Min(0) Long userId,
                                     @PathVariable("itemId") @Min(0) final Long itemId,
                                     @Validated({Marker.Create.class}) @RequestBody CommentDtoReceived newComment) {
         return itemClient.createComment(userId, itemId, newComment);

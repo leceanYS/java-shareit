@@ -36,6 +36,8 @@ class ItemRequestControllerITTest {
 
     private ResponseEntity<Object> objectResponseEntity = new ResponseEntity<>(HttpStatus.OK);
 
+    private static final String HEADER_USER_ID = "X-Sharer-User-Id";
+
     private ItemRequestDtoReceived itemDto = ItemRequestDtoReceived.builder()
             .description("asd")
             .build();
@@ -47,7 +49,7 @@ class ItemRequestControllerITTest {
 
         mockMvc.perform(post("/requests", itemDto)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .content(objectMapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isOk());
@@ -61,7 +63,7 @@ class ItemRequestControllerITTest {
 
         mockMvc.perform(post("/requests", itemDto)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .content(objectMapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isBadRequest());
@@ -74,7 +76,7 @@ class ItemRequestControllerITTest {
 
         mockMvc.perform(get("/requests")
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .content(objectMapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isOk());
@@ -87,7 +89,7 @@ class ItemRequestControllerITTest {
 
         mockMvc.perform(get("/requests/all")
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .param("from", String.valueOf(0))
                         .param("size", String.valueOf(10))
                         .content(objectMapper.writeValueAsString(itemDto))
@@ -102,7 +104,7 @@ class ItemRequestControllerITTest {
 
         mockMvc.perform(get("/requests/all")
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", -1)
+                        .header(HEADER_USER_ID, -1)
                         .param("from", String.valueOf(0))
                         .param("size", String.valueOf(10))
                         .content(objectMapper.writeValueAsString(itemDto))
@@ -117,7 +119,7 @@ class ItemRequestControllerITTest {
 
         mockMvc.perform(get("/requests/{requestId}", 1)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .content(objectMapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isOk());
@@ -132,7 +134,7 @@ class ItemRequestControllerITTest {
 
         mockMvc.perform(get("/requests/{requestId}", -1)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .content(objectMapper.writeValueAsString(itemDto))
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isBadRequest());

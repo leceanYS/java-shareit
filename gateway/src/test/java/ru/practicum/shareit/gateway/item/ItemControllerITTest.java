@@ -39,6 +39,8 @@ class ItemControllerITTest {
 
     private ResponseEntity<Object> objectResponseEntity = new ResponseEntity<>(HttpStatus.OK);
 
+    private static final String HEADER_USER_ID = "X-Sharer-User-Id";
+
     private ItemDto itemDto = ItemDto.builder()
             .id(itemId)
             .name("asd")
@@ -54,7 +56,7 @@ class ItemControllerITTest {
 
         mockMvc.perform(post("/items", itemDto)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .content(objectMapper.writeValueAsString(itemDto)))
                 .andExpect(status().isOk());
 
@@ -70,7 +72,7 @@ class ItemControllerITTest {
 
         mockMvc.perform(post("/items", itemDto)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .content(objectMapper.writeValueAsString(itemDto)))
                 .andExpect(status().isBadRequest());
 
@@ -83,7 +85,7 @@ class ItemControllerITTest {
         when(itemClient.findItem(userId, itemId)).thenReturn(objectResponseEntity);
 
         mockMvc.perform(get("/items/{itemId}", itemId)
-                        .header("X-Sharer-User-Id", userId))
+                        .header(HEADER_USER_ID, userId))
                 .andExpect(status().isOk());
 
     }
@@ -95,7 +97,7 @@ class ItemControllerITTest {
         when(itemClient.findItem(userId, -1)).thenReturn(objectResponseEntity);
 
         mockMvc.perform(get("/items/{itemId}", -1)
-                        .header("X-Sharer-User-Id", userId))
+                        .header(HEADER_USER_ID, userId))
                 .andExpect(status().isBadRequest());
 
     }
@@ -110,7 +112,7 @@ class ItemControllerITTest {
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/items/{itemId}", itemId)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .content(objectMapper.writeValueAsString(itemDto1)))
                 .andExpect(status().isOk());
 
@@ -126,7 +128,7 @@ class ItemControllerITTest {
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/items/{itemId}", itemId)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .content(objectMapper.writeValueAsString(itemDto1)))
                 .andExpect(status().isBadRequest());
 
@@ -139,7 +141,7 @@ class ItemControllerITTest {
         when(itemClient.findAllItemByUser(userId, 0, 10)).thenReturn(objectResponseEntity);
 
         mockMvc.perform(get("/items")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .param("from", String.valueOf(0))
                         .param("size", String.valueOf(10)))
                 .andExpect(status().isOk());
@@ -153,7 +155,7 @@ class ItemControllerITTest {
         when(itemClient.findAllItemByUser(-1, 0, 10)).thenReturn(objectResponseEntity);
 
         mockMvc.perform(get("/items")
-                        .header("X-Sharer-User-Id", -1)
+                        .header(HEADER_USER_ID, -1)
                         .param("from", String.valueOf(0))
                         .param("size", String.valueOf(10)))
                 .andExpect(status().isBadRequest());
@@ -166,7 +168,7 @@ class ItemControllerITTest {
         when(itemClient.search(userId, "asd", 0, 10)).thenReturn(objectResponseEntity);
 
         mockMvc.perform(get("/items/search")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .param("text", "asd")
                         .param("from", String.valueOf(0))
                         .param("size", String.valueOf(10)))
@@ -179,7 +181,7 @@ class ItemControllerITTest {
         when(itemClient.search(-1, "asd", 0, 10)).thenReturn(objectResponseEntity);
 
         mockMvc.perform(get("/items/search")
-                        .header("X-Sharer-User-Id", -1)
+                        .header(HEADER_USER_ID, -1)
                         .param("text", "asd")
                         .param("from", String.valueOf(0))
                         .param("size", String.valueOf(10)))
@@ -197,7 +199,7 @@ class ItemControllerITTest {
 
         mockMvc.perform(post("/items/{itemId}/comment", itemId)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .content(objectMapper.writeValueAsString(commentDtoReceived)))
                 .andExpect(status().isOk());
 
@@ -213,7 +215,7 @@ class ItemControllerITTest {
 
         mockMvc.perform(post("/items/{itemId}/comment", itemId)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .content(objectMapper.writeValueAsString(commentDtoReceived)))
                 .andExpect(status().isBadRequest());
 

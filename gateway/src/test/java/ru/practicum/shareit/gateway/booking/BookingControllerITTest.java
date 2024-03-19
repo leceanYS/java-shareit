@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.practicum.controller.BookingController.Constants.HEADER_USER_ID;
 
 @WebMvcTest(BookingController.class)
 class BookingControllerITTest {
@@ -39,6 +40,8 @@ class BookingControllerITTest {
 
     private long bookingId = 1L;
 
+
+
     private BookingDtoReceived booking = BookingDtoReceived.builder()
             .itemId(itemId)
             .start(LocalDateTime.now().plusSeconds(1))
@@ -55,7 +58,7 @@ class BookingControllerITTest {
 
         mockMvc.perform(post("/bookings", booking)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId).content(objectMapper.writeValueAsString(booking))
+                        .header(HEADER_USER_ID, userId).content(objectMapper.writeValueAsString(booking))
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isOk());
 
@@ -69,7 +72,7 @@ class BookingControllerITTest {
 
         mockMvc.perform(post("/bookings", booking)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", -1).content(objectMapper.writeValueAsString(booking))
+                        .header(HEADER_USER_ID, -1).content(objectMapper.writeValueAsString(booking))
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isBadRequest());
 
@@ -77,7 +80,7 @@ class BookingControllerITTest {
 
         mockMvc.perform(post("/bookings", booking)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId).content(objectMapper.writeValueAsString(booking))
+                        .header(HEADER_USER_ID, userId).content(objectMapper.writeValueAsString(booking))
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isBadRequest());
 
@@ -86,7 +89,7 @@ class BookingControllerITTest {
 
         mockMvc.perform(post("/bookings", booking)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId).content(objectMapper.writeValueAsString(booking))
+                        .header(HEADER_USER_ID, userId).content(objectMapper.writeValueAsString(booking))
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isBadRequest());
 
@@ -102,7 +105,7 @@ class BookingControllerITTest {
 
         mockMvc.perform(patch("/bookings/{bookingId}", bookingId)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .param("approved", String.valueOf(approved))
                         .content(objectMapper.writeValueAsString(booking))
                         .characterEncoding(StandardCharsets.UTF_8))
@@ -118,7 +121,7 @@ class BookingControllerITTest {
 
         mockMvc.perform(patch("/bookings/{bookingId}", -1)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .param("approved", String.valueOf(approved))
                         .content(objectMapper.writeValueAsString(booking))
                         .characterEncoding(StandardCharsets.UTF_8))
@@ -132,7 +135,7 @@ class BookingControllerITTest {
 
         mockMvc.perform(get("/bookings/{bookingId}", bookingId)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .content(objectMapper.writeValueAsString(booking))
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isOk());
@@ -145,7 +148,7 @@ class BookingControllerITTest {
 
         mockMvc.perform(get("/bookings/{bookingId}", -1)
                         .contentType("application/json")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .content(objectMapper.writeValueAsString(booking))
                         .characterEncoding(StandardCharsets.UTF_8))
                 .andExpect(status().isBadRequest());
@@ -157,7 +160,7 @@ class BookingControllerITTest {
         when(bookingClient.findListBooking(userId, State.ALL, 0, 10)).thenReturn(objectResponseEntity);
 
         mockMvc.perform(get("/bookings")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .param("state", String.valueOf(State.ALL))
                         .param("from", String.valueOf(0))
                         .param("size", String.valueOf(10)))
@@ -170,7 +173,7 @@ class BookingControllerITTest {
         when(bookingClient.findListBooking(-1, State.ALL, 0, 10)).thenReturn(objectResponseEntity);
 
         mockMvc.perform(get("/bookings")
-                        .header("X-Sharer-User-Id", -1)
+                        .header(HEADER_USER_ID, -1)
                         .param("state", String.valueOf(State.ALL))
                         .param("from", String.valueOf(0))
                         .param("size", String.valueOf(10)))
@@ -183,7 +186,7 @@ class BookingControllerITTest {
         when(bookingClient.findOwnerBooking(userId, State.ALL, 0, 10)).thenReturn(objectResponseEntity);
 
         mockMvc.perform(get("/bookings/owner")
-                        .header("X-Sharer-User-Id", userId)
+                        .header(HEADER_USER_ID, userId)
                         .param("state", String.valueOf(State.ALL))
                         .param("from", String.valueOf(0))
                         .param("size", String.valueOf(10)))
@@ -196,7 +199,7 @@ class BookingControllerITTest {
         when(bookingClient.findOwnerBooking(-1, State.ALL, 0, 10)).thenReturn(objectResponseEntity);
 
         mockMvc.perform(get("/bookings/owner")
-                        .header("X-Sharer-User-Id", -1)
+                        .header(HEADER_USER_ID, -1)
                         .param("state", String.valueOf(State.ALL))
                         .param("from", String.valueOf(0))
                         .param("size", String.valueOf(10)))
