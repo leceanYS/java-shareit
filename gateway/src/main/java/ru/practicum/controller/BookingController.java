@@ -22,6 +22,7 @@ import static ru.practicum.controller.BookingController.Constants.HEADER_USER_ID
 public class BookingController {
 
     private final BookingClient bookingClient;
+
     public final class Constants {
         public static final String HEADER_USER_ID = "X-Sharer-User-Id";
     }
